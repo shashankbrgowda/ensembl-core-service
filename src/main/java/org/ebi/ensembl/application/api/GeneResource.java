@@ -9,10 +9,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 @Path("genes")
-public class GeneController {
+public class GeneResource {
   private final CoreAdaptor<Gene> geneCoreAdaptor;
 
-  public GeneController(CoreAdaptor<Gene> geneCoreAdaptor) {
+  public GeneResource(CoreAdaptor<Gene> geneCoreAdaptor) {
     this.geneCoreAdaptor = geneCoreAdaptor;
   }
 
