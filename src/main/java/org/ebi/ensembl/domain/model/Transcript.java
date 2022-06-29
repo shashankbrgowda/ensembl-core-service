@@ -1,4 +1,3 @@
 package org.ebi.ensembl.domain.model;
 
-public class Transcript {
-}
+public class Transcript {}

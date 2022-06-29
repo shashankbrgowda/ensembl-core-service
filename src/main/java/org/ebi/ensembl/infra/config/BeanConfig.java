@@ -1,4 +1,3 @@
 package org.ebi.ensembl.infra.config;
 
-public class BeanConfig {
-}
+public class BeanConfig {}

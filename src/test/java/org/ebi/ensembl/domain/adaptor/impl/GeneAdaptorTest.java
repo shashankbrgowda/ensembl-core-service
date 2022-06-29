@@ -17,23 +17,17 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class GeneAdaptorTest {
 
-    @Inject
-    private CoreAdaptor<Gene> coreAdaptor;
+  @Inject private CoreAdaptor<Gene> coreAdaptor;
 
-    @InjectMock
-    private CoreRegistry<Gene> geneCoreRegistry;
+  @InjectMock private CoreRegistry<Gene> geneCoreRegistry;
 
-    @Test
-    void testFindByDbId() {
-        Gene gene = Gene.builder()
-                .dbId(1)
-                .stableId("ENSCG0001")
-                .stableIdVersion(1)
-                .isCurrent(true).build();
-        Uni<Gene> uni = Uni.createFrom().item(gene);
+  @Test
+  void testFindByDbId() {
+    Gene gene =
+        Gene.builder().dbId(1).stableId("ENSCG0001").stableIdVersion(1).isCurrent(true).build();
+    Uni<Gene> uni = Uni.createFrom().item(gene);
 
-        when(geneCoreRegistry.findByDbId(any()))
-                .thenReturn(uni);
-        assertEquals(uni, coreAdaptor.findByDbId(1));
-    }
+    when(geneCoreRegistry.findByDbId(any())).thenReturn(uni);
+    assertEquals(uni, coreAdaptor.findByDbId(1));
+  }
 }

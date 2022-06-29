@@ -15,28 +15,23 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class GeneResourceTest {
 
-  @InjectMock
-  private CoreAdaptor<Gene> coreAdaptor;
+  @InjectMock private CoreAdaptor<Gene> coreAdaptor;
 
   @Test
   void testGetGene() {
-    Gene gene = Gene.builder()
-            .dbId(1)
-            .stableId("ENSCG0001")
-            .stableIdVersion(1)
-            .isCurrent(true).build();
+    Gene gene =
+        Gene.builder().dbId(1).stableId("ENSCG0001").stableIdVersion(1).isCurrent(true).build();
     Uni<Gene> uni = Uni.createFrom().item(gene);
 
-    when(coreAdaptor.findByDbId(any()))
-            .thenReturn(uni);
+    when(coreAdaptor.findByDbId(any())).thenReturn(uni);
 
     given()
         .when()
-            .pathParam("dbId", 1)
+        .pathParam("dbId", 1)
         .get("api/genes/{dbId}")
         .then()
         .statusCode(200)
         .body("dbId", equalTo(1))
-            .body("stableId", equalTo("ENSCG0001"));
+        .body("stableId", equalTo("ENSCG0001"));
   }
 }
