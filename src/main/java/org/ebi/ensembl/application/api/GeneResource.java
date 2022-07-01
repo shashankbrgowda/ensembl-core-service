@@ -1,8 +1,8 @@
 package org.ebi.ensembl.application.api;
 
 import io.smallrye.mutiny.Uni;
+import org.ebi.ensembl.application.model.Gene;
 import org.ebi.ensembl.domain.adaptor.CoreAdaptor;
-import org.ebi.ensembl.domain.model.Gene;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

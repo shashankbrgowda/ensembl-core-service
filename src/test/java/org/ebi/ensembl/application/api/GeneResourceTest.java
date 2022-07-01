@@ -3,8 +3,8 @@ package org.ebi.ensembl.application.api;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.smallrye.mutiny.Uni;
+import org.ebi.ensembl.application.model.Gene;
 import org.ebi.ensembl.domain.adaptor.CoreAdaptor;
-import org.ebi.ensembl.domain.model.Gene;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;

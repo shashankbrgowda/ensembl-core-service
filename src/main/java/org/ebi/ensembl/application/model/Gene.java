@@ -1,4 +1,4 @@
-package org.ebi.ensembl.domain.model;
+package org.ebi.ensembl.application.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -26,6 +28,8 @@ public class Gene {
   @JsonProperty(value = "version", required = true)
   private Integer stableIdVersion;
 
+  private Integer seqRegionId;
+
   // Start position of the gene
   @JsonProperty("start")
   private Integer startPos;
@@ -33,6 +37,9 @@ public class Gene {
   // end position of the gene
   @JsonProperty("end")
   private Integer endPos;
+
+  // The strand the gene is on
+  private Integer strand;
 
   // the biotype e.g. "protein_coding"
   private String bioType;
@@ -43,15 +50,16 @@ public class Gene {
   // the genes source, e.g. "ensembl"
   private String source;
 
+  private Integer analysisId;
+
   // specifies if this is the current version of the gene
   @JsonProperty(value = "isCurrent", required = true)
   private Boolean isCurrent;
 
-  // The strand the gene is on
-  private Integer strand;
-
   // the slice the gene is on
   private Slice slice;
+
+  private Integer displayXrefId;
 
   // the external database name associated with this gene
   private String externalName;
@@ -72,8 +80,8 @@ public class Gene {
   private Integer canonicalTranscriptId;
 
   // the date the gene was created
-  private String createdDate;
+  private LocalDateTime createdDate;
 
   // the date the gene was last modified
-  private String modifiedDate;
+  private LocalDateTime modifiedDate;
 }

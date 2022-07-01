@@ -1,4 +1,4 @@
-package org.ebi.ensembl.domain.model;
+package org.ebi.ensembl.application.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
