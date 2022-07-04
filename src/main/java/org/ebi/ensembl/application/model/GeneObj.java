@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Gene {
+public class GeneObj {
   // DB Identifier
   @JsonProperty(value = "dbId", required = true)
   private Integer dbId;
