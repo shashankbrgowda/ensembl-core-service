@@ -2,7 +2,7 @@ package org.ebi.ensembl.application.api;
 
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.GeneObj;
-import org.ebi.ensembl.domain.adaptor.CoreAdaptor;
+import org.ebi.ensembl.domain.service.CoreService;
 import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
 
 import javax.ws.rs.*;
@@ -13,16 +13,16 @@ import java.io.IOException;
 
 @Path("genes")
 public class GeneResource {
-  private final CoreAdaptor<GeneObj> geneCoreAdaptor;
+  private final CoreService<GeneObj> geneCoreService;
 
-  public GeneResource(CoreAdaptor<GeneObj> geneCoreAdaptor) {
-    this.geneCoreAdaptor = geneCoreAdaptor;
+  public GeneResource(CoreService<GeneObj> geneCoreService) {
+    this.geneCoreService = geneCoreService;
   }
 
   @POST
   @Path("{dbId}")
   public Uni<GeneObj> gene(@PathParam("dbId") Integer dbId, ConnectionParams connectionParams) {
-    return geneCoreAdaptor.fetchByDbId(connectionParams, dbId);
+    return geneCoreService.fetchByDbId(connectionParams, dbId);
   }
 
   @GET

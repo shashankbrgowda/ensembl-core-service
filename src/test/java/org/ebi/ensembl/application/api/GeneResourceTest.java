@@ -4,7 +4,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.GeneObj;
-import org.ebi.ensembl.domain.adaptor.CoreAdaptor;
+import org.ebi.ensembl.domain.service.CoreService;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class GeneResourceTest {
 
-  @InjectMock private CoreAdaptor<GeneObj> coreAdaptor;
+  @InjectMock private CoreService<GeneObj> coreService;
 
   @Test
   void testGetGene() {
@@ -23,7 +23,7 @@ class GeneResourceTest {
         GeneObj.builder().dbId(1).stableId("ENSCG0001").stableIdVersion(1).isCurrent(true).build();
     Uni<GeneObj> uni = Uni.createFrom().item(gene);
 
-    when(coreAdaptor.fetchByDbId(any(), any())).thenReturn(uni);
+    when(coreService.fetchByDbId(any(), any())).thenReturn(uni);
 
     given()
         .when()

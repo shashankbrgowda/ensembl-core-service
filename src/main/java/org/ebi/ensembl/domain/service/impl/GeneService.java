@@ -1,12 +1,11 @@
-package org.ebi.ensembl.domain.adaptor.impl;
+package org.ebi.ensembl.domain.service.impl;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.Analysis;
 import org.ebi.ensembl.application.model.GeneObj;
-import org.ebi.ensembl.application.model.OntologyTerm;
 import org.ebi.ensembl.application.model.Slice;
-import org.ebi.ensembl.domain.adaptor.CoreAdaptor;
+import org.ebi.ensembl.domain.service.CoreService;
 import org.ebi.ensembl.infra.repo.CoreRepo;
 import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
 
@@ -15,13 +14,14 @@ import java.util.Set;
 
 /*
 TODO: fetch_all_by_outward_search, fetch_all_by_logic_name, fetch_all_by_Slice_and_score,
- fetch_all_by_Slice_constraint, fetch_all_nearest_by_Feature
+ fetch_all_by_Slice_constraint, fetch_all_nearest_by_Feature, fetch_Iterator_by_Slice,
+ fetch_Iterator_by_Slice_method, fetch_nearest_by_Feature, generate_in_constraint
  */
 @ApplicationScoped
-public class GeneAdaptor implements CoreAdaptor<GeneObj> {
+public class GeneService implements CoreService<GeneObj> {
   private final CoreRepo<GeneObj> geneCoreRepo;
 
-  public GeneAdaptor(CoreRepo<GeneObj> geneCoreAdaptor) {
+  public GeneService(CoreRepo<GeneObj> geneCoreAdaptor) {
     this.geneCoreRepo = geneCoreAdaptor;
   }
 
@@ -135,20 +135,6 @@ public class GeneAdaptor implements CoreAdaptor<GeneObj> {
   }
 
   /**
-   * Retrieves a listref of genes whose translation contain interpro domain $domain. The genes are
-   * returned in their native coord system (i.e. the coord_system they are stored in). If the coord
-   * system needs to be changed, then tranform or transfer should be called on the individual
-   * objects returned.
-   *
-   * @param params Db connection parameters
-   * @param domain The domain to fetch genes from
-   * @return
-   */
-  public Multi<GeneObj> fetchAllByDomain(ConnectionParams params, String domain) {
-    return null;
-  }
-
-  /**
    * Gets all the genes with transcripts with exons which have a specified hit on a particular type
    * of feature. Optionally filter by analysis.
    *
@@ -181,42 +167,6 @@ public class GeneAdaptor implements CoreAdaptor<GeneObj> {
    */
   public Multi<GeneObj> fetchAllByExternalName(
       ConnectionParams params, String externalName, String externalDbName, Boolean sqlOverride) {
-    return null;
-  }
-
-  /**
-   * Retrieves a list of genes that are associated with the given GO term, or with any of its
-   * descendent GO terms. The genes returned are in their native coordinate system, i.e. in the
-   * coordinate system in which they are stored in the database. If another coordinate system is
-   * required then the Gene::transfer or Gene::transform method can be used. Legacy PERL api
-   * example: <code>
-   *   $gene_adaptor->fetch_all_by_GOTerm( $go_adaptor->fetch_by_accession('GO:0030326') ) };
-   *   </code>
-   *
-   * @param connectionParams Db connection parameters
-   * @param ontologyTerm The GO term for which genes should be fetched.
-   * @return
-   */
-  public Multi<GeneObj> fetchAllByGOTerm(
-      ConnectionParams connectionParams, OntologyTerm ontologyTerm) {
-    return null;
-  }
-
-  /**
-   * Retrieves a list of genes that are associated with the given GO term, or with any of its
-   * descendent GO terms. The genes returned are in their native coordinate system, i.e. in the
-   * coordinate system in which they are stored in the database. If another coordinate system is
-   * required then the Gene::transfer or Gene::transform method can be used.
-   *
-   * <p>perl api ex: <code>
-   *     genes = @{ $gene_adaptor->fetch_all_by_GOTerm_accession('GO:0030326') };
-   * </code>
-   *
-   * @param params Db connection parameters
-   * @param goTermAccession The GO term accession for which genes should be fetched.
-   * @return
-   */
-  public Multi<GeneObj> fetchAllByGOTermAccession(ConnectionParams params, String goTermAccession) {
     return null;
   }
 
@@ -424,6 +374,66 @@ public class GeneAdaptor implements CoreAdaptor<GeneObj> {
    */
   public Uni<GeneObj> fetchByStableIdVersion(
       ConnectionParams params, String stableId, Integer version) {
+    return null;
+  }
+
+  /**
+   * Retrieves a gene from the database via the database identifier of one of its transcripts.
+   *
+   * @param params Db connection parameters
+   * @param transcriptId Unique database identifier for the transcript whose gene should be
+   *     retrieved. The gene is returned in its native coord system (i.e. the coord_system it is
+   *     stored in). If the coord system needs to be changed, then tranform or transfer should be
+   *     called on the returned object. undef is returned if the gene or transcript is not found in
+   *     the database.
+   * @return
+   */
+  public Uni<GeneObj> fetchByTranscriptId(ConnectionParams params, String transcriptId) {
+    return null;
+  }
+
+  /**
+   * Retrieves a gene from the database via the stable ID of one of its transcripts
+   *
+   * @param params Db connection parameters
+   * @param transcriptStableId transcript stable ID whose gene should be retrieved
+   * @return
+   */
+  public Uni<GeneObj> fetchByTranscriptStableId(
+      ConnectionParams params, String transcriptStableId) {
+    return null;
+  }
+
+  /**
+   * Retrieves a gene via the stable id of one of its translations.
+   *
+   * @param params Db connection parameters
+   * @param translationStableId The stable id of a translation of the gene to be obtained
+   * @return
+   */
+  public Uni<GeneObj> fetchByTranslationStableId(ConnectionParams params, String translationStableId) {
+    return null;
+  }
+
+  /**
+   * Stores a gene in the database.
+   *
+   * @param params Db connection parameters
+   * @param geneObj The gene to store in the database
+   * @param ignoreReleaseInXref ignore_release in xrefs [default 1] set to 0 to use release info in
+   *     external database references
+   * @param preventCoOrdReCalc prevent coordinate recalculation if you are persisting transcripts
+   *     with this gene
+   * @param preventSupportFeaturesCopy prevent copying supporting features across exons increased
+   *     speed for lost accuracy
+   * @return the database identifier (dbID) of the newly stored gene
+   */
+  public Uni<Integer> store(
+      ConnectionParams params,
+      GeneObj geneObj,
+      Boolean ignoreReleaseInXref,
+      Boolean preventCoOrdReCalc,
+      Boolean preventSupportFeaturesCopy) {
     return null;
   }
 
