@@ -6,6 +6,7 @@ import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.GeneObj;
 import org.ebi.ensembl.domain.service.CoreService;
 import org.ebi.ensembl.infra.repo.CoreRepo;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
+@Disabled
 class GeneAdaptorTest {
   @InjectMock private CoreRepo<GeneObj> geneCoreRegistry;
 

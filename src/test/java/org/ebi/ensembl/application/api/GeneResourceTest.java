@@ -5,6 +5,7 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.GeneObj;
 import org.ebi.ensembl.domain.service.CoreService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
@@ -13,6 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @QuarkusTest
+@Disabled
 class GeneResourceTest {
 
   @InjectMock private CoreService<GeneObj> coreService;
