@@ -1,40 +1,28 @@
-package org.ebi.ensembl.application.api;
+package org.ebi.ensembl.graphql;
 
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.application.model.GeneObj;
 import org.ebi.ensembl.grpc.Gene;
 import org.ebi.ensembl.infra.repo.CoreRepo;
 import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
+import org.eclipse.microprofile.graphql.Description;
+import org.eclipse.microprofile.graphql.GraphQLApi;
+import org.eclipse.microprofile.graphql.Name;
+import org.eclipse.microprofile.graphql.Query;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-
-@Path("genes")
-public class GeneResource {
+@GraphQLApi
+public class GeneAdaptorSvc {
   private final CoreRepo<Gene> geneCoreRepo;
 
-  public GeneResource(CoreRepo<Gene> geneCoreRepo) {
+  public GeneAdaptorSvc(CoreRepo<Gene> geneCoreRepo) {
     this.geneCoreRepo = geneCoreRepo;
   }
 
-  // TODO: Jackson doesn't work for protoc generated classes.. need to DTO
-  @POST
-  @Path("{dbId}")
-  public Uni<GeneObj> gene(@PathParam("dbId") Integer dbId, ConnectionParams connectionParams) {
+  @Query("fetchByDbId")
+  @Description("Fetch gene by db identifier")
+  public Uni<GeneObj> fetchByDbId(
+      @Name("dbId") Integer dbId, @Name("connectionParams") ConnectionParams connectionParams) {
     return geneCoreRepo.findByDbId(connectionParams, dbId).onItem().transform(this::mapToGeneObj);
-  }
-
-  @GET
-  @Path("download")
-  @Produces(MediaType.APPLICATION_OCTET_STREAM)
-  public Response download() throws IOException {
-    File file = new File("/Users/shabr/Documents/ENCSR879GEQ.merged.bam.zip");
-    return Response.ok(file)
-        .header("Content-Disposition", "attachment;filename=" + file.getName())
-        .build();
   }
 
   private GeneObj mapToGeneObj(Gene gene) {

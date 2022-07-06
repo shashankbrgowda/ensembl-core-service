@@ -80,8 +80,8 @@ public class GeneObj {
   private Integer canonicalTranscriptId;
 
   // the date the gene was created
-  private LocalDateTime createdDate;
+  private String createdDate;
 
   // the date the gene was last modified
-  private LocalDateTime modifiedDate;
+  private String modifiedDate;
 }

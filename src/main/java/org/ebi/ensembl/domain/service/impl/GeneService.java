@@ -6,6 +6,7 @@ import org.ebi.ensembl.application.model.Analysis;
 import org.ebi.ensembl.application.model.GeneObj;
 import org.ebi.ensembl.application.model.Slice;
 import org.ebi.ensembl.domain.service.CoreService;
+import org.ebi.ensembl.grpc.Gene;
 import org.ebi.ensembl.infra.repo.CoreRepo;
 import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
 
@@ -18,10 +19,10 @@ TODO: fetch_all_by_outward_search, fetch_all_by_logic_name, fetch_all_by_Slice_a
  fetch_Iterator_by_Slice_method, fetch_nearest_by_Feature, generate_in_constraint
  */
 @ApplicationScoped
-public class GeneService implements CoreService<GeneObj> {
-  private final CoreRepo<GeneObj> geneCoreRepo;
+public class GeneService implements CoreService<Gene> {
+  private final CoreRepo<Gene> geneCoreRepo;
 
-  public GeneService(CoreRepo<GeneObj> geneCoreAdaptor) {
+  public GeneService(CoreRepo<Gene> geneCoreAdaptor) {
     this.geneCoreRepo = geneCoreAdaptor;
   }
 
@@ -316,8 +317,8 @@ public class GeneService implements CoreService<GeneObj> {
    * @return
    */
   @Override
-  public Uni<GeneObj> fetchByDbId(ConnectionParams params, Integer dbId) {
-    return geneCoreRepo.findByDbId(params, dbId);
+  public Uni<Gene> fetchByDbId(ConnectionParams params, Integer dbId) {
+    return null;
   }
 
   /**
