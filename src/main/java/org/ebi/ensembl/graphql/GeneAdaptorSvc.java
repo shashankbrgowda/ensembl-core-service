@@ -1,15 +1,16 @@
 package org.ebi.ensembl.graphql;
 
 import io.smallrye.mutiny.Uni;
-import org.ebi.ensembl.application.model.GeneObj;
+import org.ebi.ensembl.rest.model.GeneObj;
 import org.ebi.ensembl.grpc.Gene;
-import org.ebi.ensembl.infra.repo.CoreRepo;
-import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
+import org.ebi.ensembl.repo.CoreRepo;
+import org.ebi.ensembl.repo.handler.ConnectionParams;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Name;
 import org.eclipse.microprofile.graphql.Query;
 
+// Schema endpoint: http://localhost:8080/graphql/schema.graphql
 @GraphQLApi
 public class GeneAdaptorSvc {
   private final CoreRepo<Gene> geneCoreRepo;

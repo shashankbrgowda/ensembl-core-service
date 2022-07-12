@@ -1,4 +1,4 @@
-package org.ebi.ensembl.application.exception;
+package org.ebi.ensembl.rest.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
   public ResourceNotFoundException() {

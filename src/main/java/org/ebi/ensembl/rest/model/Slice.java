@@ -1,4 +1,4 @@
-package org.ebi.ensembl.application.model;
+package org.ebi.ensembl.rest.model;
 
 public class Slice {
     public String id;

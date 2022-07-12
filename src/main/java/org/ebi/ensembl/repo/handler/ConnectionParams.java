@@ -1,4 +1,4 @@
-package org.ebi.ensembl.infra.repo.handler;
+package org.ebi.ensembl.repo.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

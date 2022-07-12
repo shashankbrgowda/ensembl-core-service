@@ -1,4 +1,4 @@
-package org.ebi.ensembl.application.exception;
+package org.ebi.ensembl.rest.exception;
 
 import io.smallrye.mutiny.Uni;
 import org.jboss.resteasy.reactive.RestResponse;

@@ -1,4 +1,4 @@
-package org.ebi.ensembl.application;
+package org.ebi.ensembl;
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;

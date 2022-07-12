@@ -1,11 +1,11 @@
-package org.ebi.ensembl.infra.repo.impl;
+package org.ebi.ensembl.repo.impl;
 
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
 import org.ebi.ensembl.grpc.Gene;
-import org.ebi.ensembl.infra.repo.CoreRepo;
-import org.ebi.ensembl.infra.repo.handler.ConnectionHandler;
-import org.ebi.ensembl.infra.repo.handler.ConnectionParams;
+import org.ebi.ensembl.repo.CoreRepo;
+import org.ebi.ensembl.repo.handler.ConnectionHandler;
+import org.ebi.ensembl.repo.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
