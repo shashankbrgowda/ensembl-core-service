@@ -15,7 +15,8 @@ public class GeneAdaptor implements GeneSvc {
 
   @Override
   public Uni<CountResponse> countAllByBioTypes(CountAllByBioTypesRequest request) {
-    return null;
+    return geneCoreRepo.countAllByBioTypes(
+        mapConnectionParams(request.getParams()), request.getBioTypesList());
   }
 
   @Override

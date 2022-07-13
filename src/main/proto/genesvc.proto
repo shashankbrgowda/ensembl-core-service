@@ -416,8 +416,8 @@ message CountAllByBioTypesRequest {
   // Db connection parameters
   ConnectionParams params = 1;
 
-  // The unique database identifier for the feature to be obtained
-  int32 db_id = 2;
+  // The biotype of the gene to retrieve. You can have as an argument a reference to a list of biotypes
+  repeated string bio_types = 2;
 }
 
 message FetchByDbIdRequest {

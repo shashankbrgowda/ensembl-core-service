@@ -1,13 +1,16 @@
 package org.ebi.ensembl.repo.impl;
 
+import com.google.protobuf.ProtocolStringList;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
+import org.ebi.ensembl.grpc.CountResponse;
 import org.ebi.ensembl.grpc.Gene;
 import org.ebi.ensembl.repo.CoreRepo;
 import org.ebi.ensembl.repo.handler.ConnectionHandler;
 import org.ebi.ensembl.repo.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @ApplicationScoped
@@ -28,6 +31,37 @@ public class GeneRepo implements CoreRepo<Gene> {
         .transform(RowSet::iterator)
         .onItem()
         .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
+  }
+
+  @Override
+  public Uni<CountResponse> countAllByBioTypes(
+      ConnectionParams params, ProtocolStringList bioTypes) {
+    String bioTypesStr = "'" + String.join("','", new ArrayList<>(bioTypes)) + "'";
+    return connectionHandler
+        .pool(params)
+        .query(
+            "select count(*) as total from gene where biotype in ("
+                + bioTypesStr
+                + ") and is_current=1")
+        .execute()
+        .onItem()
+        .transform(RowSet::iterator)
+        .onItem()
+        .transform(itr -> itr.hasNext() ? countDto(itr.next()) : null);
+  }
+
+  private CountResponse countDto(Row row) {
+    CountResponse.Builder builder = CountResponse.newBuilder();
+
+    if (Objects.isNull(row)) {
+      return null;
+    }
+
+    if (Objects.nonNull(row.getInteger("total"))) {
+      builder.setCount(row.getInteger("total"));
+    }
+
+    return builder.build();
   }
 
   private Gene geneDto(Row r) {
