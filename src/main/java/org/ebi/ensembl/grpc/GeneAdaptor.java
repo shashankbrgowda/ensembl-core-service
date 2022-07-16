@@ -2,6 +2,8 @@ package org.ebi.ensembl.grpc;
 
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
+import org.ebi.ensembl.grpc.common.Gene;
+import org.ebi.ensembl.grpc.gene.*;
 import org.ebi.ensembl.repo.CoreRepo;
 import org.ebi.ensembl.repo.handler.ConnectionParams;
 
@@ -150,7 +152,7 @@ public class GeneAdaptor implements GeneSvc {
   }
 
   private ConnectionParams mapConnectionParams(
-      org.ebi.ensembl.grpc.ConnectionParams connectionParams) {
+      org.ebi.ensembl.grpc.common.ConnectionParams connectionParams) {
     return ConnectionParams.builder()
         .host(connectionParams.getHost())
         .port(connectionParams.getPort())

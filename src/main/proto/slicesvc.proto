@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.slice";
+option java_outer_classname = "SliceSvcProto";
+
+service SliceSvc {
+  rpc FetchAll(FetchAllRequest) returns (FetchAllResponse) {};
+}
+
+message FetchAllRequest {
+  ConnectionParams params = 1;
+  // The name of the coordinate system to retrieve slices of. This may be a name of an acutal coordinate system or an
+  // alias to a coordinate system.  Valid aliases are 'seqlevel' or 'toplevel'.
+  string coord_system_name = 2;
+  // The version of the coordinate system to retrieve slices of
+  optional string coord_system_version = 3;
+  // If this argument is not provided then only reference slices will be returned. If set, both reference and non
+  // reference slices will be returned.
+  optional bool include_non_reference = 4;
+  //  If set duplicate regions will be returned. NOTE: if you do not use this option and you have a
+  //  PAR (pseudo-autosomal region) at the beginning of your seq_region then your slice will not start at position 1,
+  //  so coordinates retrieved from this slice might not be what you expected.
+  optional int32 include_duplicates = 5;
+  // If set lrg regions will be returned aswell.
+  optional bool include_lrg = 6;
+}
+
+message FetchAllResponse {
+  repeated Slice slices = 1;
+}

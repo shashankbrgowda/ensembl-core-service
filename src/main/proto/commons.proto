@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.common";
+option java_outer_classname = "CommonsProto";
+
+message ConnectionParams {
+  // db host name
+  string host = 1;
+  // port number
+  int32 port = 2;
+  // database name
+  string db_name = 3;
+  string user_name = 4;
+  string password = 5;
+}
+
+message Feature {
+  int32 start = 1;
+  int32 end = 2;
+  int32 strand = 3;
+  Slice slice = 4;
+  Analysis analysis = 5;
+}
+
+message Analysis {
+  int32 id = 1;
+  string logic_name = 2;
+  string db = 3;
+  string db_version = 4;
+  string db_file = 5;
+  string program = 6;
+  string program_version = 7;
+  string program_file = 8;
+  string gff_source = 9;
+  string gff_feature = 10;
+  string module = 11;
+  string module_version = 12;
+  string parameters = 13;
+  string created = 14;
+  string description = 15;
+  string display_label = 16;
+  string displayable = 17;
+  string web_data = 18;
+}
+
+message Slice {
+  string coord_system = 1;
+  int32 start = 2;
+  int32 end = 3;
+  int32 strand = 4;
+  string seq_region_name = 5;
+  int32 seq_region_length = 6;
+}
+
+message Gene {
+  // DB Identifier
+  int32 db_id = 1;
+  // The stable identifier of this gene
+  string stable_id = 2;
+  // the version of the stable identifier of this gene
+  int32 stable_id_version = 3;
+  int32 seq_region_id = 4;
+  // Start position of the gene
+  int32 start_pos = 5;
+  // end position of the gene
+  int32 end_pos = 6;
+  // The strand the gene is on
+  int32 strand = 7;
+  // the biotype e.g. "protein_coding"
+  string bio_type = 8;
+  // The genes description
+  string description = 9;
+  // the genes source, e.g. "ensembl"
+  string source = 10;
+  int32 analysis_id = 11;
+  // specifies if this is the current version of the gene
+  bool is_current = 12;
+  int32 display_xref_id = 13;
+  // the external database name associated with this gene
+  string external_name = 14;
+  // the name of the database the external name is from
+  string external_db = 15;
+  // the status of the external identifier
+  string external_status = 16;
+  // the canonical transcript dbID of this gene, if the transcript object itself is not available.
+  int32 canonical_transcript_id = 17;
+  // the date the gene was created
+  string created_date = 18;
+  // the date the gene was last modified
+  string modified_date = 19;
+}
+

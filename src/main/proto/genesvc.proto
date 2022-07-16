@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package gene;
+import "commons.proto";
 
 option java_multiple_files = true;
-option java_package = "org.ebi.ensembl.grpc";
+option java_package = "org.ebi.ensembl.grpc.gene";
 option java_outer_classname = "GeneSvcProto";
 
 service GeneSvc {
@@ -333,8 +333,6 @@ message FetchAllByExonSupportingEvidenceRequest {
   optional Analysis analysis = 4;
 }
 
-message Analysis {}
-
 message FetchAllByDisplayLabelRequest {
   // Db connection parameters
   ConnectionParams params = 1;
@@ -426,75 +424,4 @@ message FetchByDbIdRequest {
 
   // The unique database identifier for the feature to be obtained
   int32 db_id = 2;
-}
-
-message ConnectionParams {
-  // db host name
-  string host = 1;
-
-  // port number
-  int32 port = 2;
-
-  // database name
-  string db_name = 3;
-  string user_name = 4;
-  string password = 5;
-}
-
-message Slice {}
-
-message Gene {
-  // DB Identifier
-  int32 db_id = 1;
-
-  // The stable identifier of this gene
-  string stable_id = 2;
-
-  // the version of the stable identifier of this gene
-  int32 stable_id_version = 3;
-
-  int32 seq_region_id = 4;
-
-  // Start position of the gene
-  int32 start_pos = 5;
-
-  // end position of the gene
-  int32 end_pos = 6;
-
-  // The strand the gene is on
-  int32 strand = 7;
-
-  // the biotype e.g. "protein_coding"
-  string bio_type = 8;
-
-  // The genes description
-  string description = 9;
-
-  // the genes source, e.g. "ensembl"
-  string source = 10;
-
-  int32 analysis_id = 11;
-
-  // specifies if this is the current version of the gene
-  bool is_current = 12;
-
-  int32 display_xref_id = 13;
-
-  // the external database name associated with this gene
-  string external_name = 14;
-
-  // the name of the database the external name is from
-  string external_db = 15;
-
-  // the status of the external identifier
-  string external_status = 16;
-
-  // the canonical transcript dbID of this gene, if the transcript object itself is not available.
-  int32 canonical_transcript_id = 17;
-
-  // the date the gene was created
-  string created_date = 18;
-
-  // the date the gene was last modified
-  string modified_date = 19;
 }
