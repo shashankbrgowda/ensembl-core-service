@@ -1,7 +1,9 @@
 package org.ebi.ensembl.repo;
 
 import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
+import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.ebi.ensembl.grpc.common.CoordSystem;
 import org.ebi.ensembl.handler.ConnectionHandler;
@@ -28,6 +30,19 @@ public class CoordSystemRepo {
         .transformToMulti(set -> Multi.createFrom().iterable(set))
         .onItem()
         .transform(this::mapCoordSystem);
+  }
+
+  public Uni<CoordSystem> fetchByRank(
+      ConnectionParams connectionParams, Integer speciesId, int rank) {
+    return connectionHandler
+        .pool(connectionParams)
+        .preparedQuery(
+            "select coord_system_id, name, rank, version, attrib from coord_system where species_id = ? and rank = ?")
+        .execute(Tuple.of(speciesId, rank))
+        .onItem()
+        .transform(RowSet::iterator)
+        .onItem()
+        .transform(itr -> itr.hasNext() ? mapCoordSystem(itr.next()) : null);
   }
 
   private CoordSystem mapCoordSystem(Row r) {

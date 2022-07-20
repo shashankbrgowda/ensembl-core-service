@@ -37,7 +37,19 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
 
   @Override
   public Uni<CoordSystem> fetchByRank(FetchByRankRequest request) {
-    return null;
+    int rank = request.getRank();
+    ConnectionParams connectionParams = ConnectionParams.mapConnectionParams(request.getParams());
+    String speciesName = connectionParams.getRequestMetadata().getSpecies();
+
+    if (rank == 0) {
+      return fetchTopLevel(EmptyRequest.newBuilder().setParams(request.getParams()).build());
+    }
+
+    return speciesRepo
+        .fetchSpeciesId(connectionParams, speciesName)
+        .onItem()
+        .transformToUni(
+            speciesId -> coordSystemRepo.fetchByRank(connectionParams, speciesId, rank));
   }
 
   @Override
@@ -52,6 +64,7 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
 
   @Override
   public Uni<CoordSystem> fetchTopLevel(EmptyRequest request) {
-    return null;
+    return Uni.createFrom()
+        .item(CoordSystem.newBuilder().setName("toplevel").setTopLevel(1).build());
   }
 }
