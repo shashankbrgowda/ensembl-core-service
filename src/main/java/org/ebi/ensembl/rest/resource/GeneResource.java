@@ -2,8 +2,8 @@ package org.ebi.ensembl.rest.resource;
 
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.Gene;
+import org.ebi.ensembl.repo.GeneRepo;
 import org.ebi.ensembl.rest.model.GeneObj;
-import org.ebi.ensembl.repo.CoreRepo;
 import org.ebi.ensembl.repo.handler.ConnectionParams;
 
 import javax.ws.rs.*;
@@ -14,17 +14,17 @@ import java.io.IOException;
 
 @Path("genes")
 public class GeneResource {
-  private final CoreRepo<Gene> geneCoreRepo;
+  private final GeneRepo geneRepo;
 
-  public GeneResource(CoreRepo<Gene> geneCoreRepo) {
-    this.geneCoreRepo = geneCoreRepo;
+  public GeneResource(GeneRepo geneRepo) {
+    this.geneRepo = geneRepo;
   }
 
   // TODO: Jackson doesn't work for protoc generated classes.. need to DTO
   @POST
   @Path("{dbId}")
   public Uni<GeneObj> gene(@PathParam("dbId") Integer dbId, ConnectionParams connectionParams) {
-    return geneCoreRepo.findByDbId(connectionParams, dbId).onItem().transform(this::mapToGeneObj);
+    return geneRepo.findByDbId(connectionParams, dbId).onItem().transform(this::mapToGeneObj);
   }
 
   @GET

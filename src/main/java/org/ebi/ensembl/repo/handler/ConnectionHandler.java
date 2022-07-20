@@ -40,7 +40,7 @@ public class ConnectionHandler {
     return pool;
   }
 
-  private String key(ConnectionParams params) {
+  public String key(ConnectionParams params) {
     // jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB_NAME}
     return String.format(
         "jdbc:mysql://%s:%d/%s", params.getHost(), params.getPort(), params.getDbName());

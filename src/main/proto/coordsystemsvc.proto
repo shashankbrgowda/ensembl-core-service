@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.coord";
+option java_outer_classname = "CoordSystemSvcProto";
+
+service CoordSystemSvc {
+  rpc FetchAll(EmptyRequest) returns (stream CoordSystem) {};
+  rpc FetchByRank(FetchByRankRequest) returns (CoordSystem) {};
+  rpc FetchByName(FetchByNameRequest) returns (CoordSystem) {};
+  rpc FetchSequenceLevel(EmptyRequest) returns (CoordSystem) {};
+  rpc FetchTopLevel(EmptyRequest) returns (CoordSystem) {};
+}
+
+message EmptyRequest {
+  ConnectionParams params = 1;
+}
+
+message FetchByNameRequest {
+  ConnectionParams params = 1;
+  string name = 2;
+  optional string version = 3;
+}
+
+message FetchByRankRequest {
+  ConnectionParams params = 1;
+  int32 rank = 2;
+}

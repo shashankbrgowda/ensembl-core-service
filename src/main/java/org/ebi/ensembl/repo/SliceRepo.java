@@ -1,4 +1,4 @@
-package org.ebi.ensembl.repo.impl;
+package org.ebi.ensembl.repo;
 
 import org.ebi.ensembl.repo.handler.ConnectionHandler;
 

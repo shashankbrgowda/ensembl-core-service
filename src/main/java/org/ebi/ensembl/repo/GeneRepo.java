@@ -1,11 +1,10 @@
-package org.ebi.ensembl.repo.impl;
+package org.ebi.ensembl.repo;
 
 import com.google.protobuf.ProtocolStringList;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.grpc.gene.CountResponse;
-import org.ebi.ensembl.repo.CoreRepo;
 import org.ebi.ensembl.repo.handler.ConnectionHandler;
 import org.ebi.ensembl.repo.handler.ConnectionParams;
 
@@ -14,14 +13,13 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 @ApplicationScoped
-public class GeneRepo implements CoreRepo<Gene> {
+public class GeneRepo {
   private final ConnectionHandler connectionHandler;
 
   public GeneRepo(ConnectionHandler connectionHandler) {
     this.connectionHandler = connectionHandler;
   }
 
-  @Override
   public Uni<Gene> findByDbId(ConnectionParams params, Integer dbId) {
     return connectionHandler
         .pool(params)
@@ -33,7 +31,6 @@ public class GeneRepo implements CoreRepo<Gene> {
         .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
   }
 
-  @Override
   public Uni<CountResponse> countAllByBioTypes(
       ConnectionParams params, ProtocolStringList bioTypes) {
     String bioTypesStr = "'" + String.join("','", new ArrayList<>(bioTypes)) + "'";

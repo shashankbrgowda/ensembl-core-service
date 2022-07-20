@@ -13,6 +13,16 @@ message ConnectionParams {
   string db_name = 3;
   string user_name = 4;
   string password = 5;
+  RequestMetadata request_metadata = 6;
+}
+
+message RequestMetadata {
+  // ex: Human
+  string species = 1;
+  // ex: Core
+  string group = 2;
+  // ex: Gene
+  string type = 3;
 }
 
 message Feature {
@@ -51,6 +61,29 @@ message Slice {
   int32 strand = 4;
   string seq_region_name = 5;
   int32 seq_region_length = 6;
+}
+
+message CoordSystem {
+  // The name of the coordinate system
+  string name = 1;
+  // (optional) The version of the coordinate system. Note that if the version passed in is undefined,
+  // it will be set to the empty string in the resulting CoordSystem object.
+  string version = 2;
+  // The rank of the coordinate system. The highest level coordinate system should have rank 1, the
+  // second highest rank 2 and so on.  An example of a high level coordinate system is 'chromosome' an
+  // example of a lower level coordinate system is 'clone'.
+  int32 rank = 3;
+  // (optional) Sets whether this is a top-level coord system. Default = 0. This should only be set to
+  // true if you are creating an artificial toplevel coordsystem by the name of 'toplevel'
+  int32 top_level = 4;
+  //  (optional) Sets whether this is a sequence level coordinate system. Default = 0
+  int32 sequence_level = 5;
+  // (optional) Whether this is the default version of the coordinate systems of this name. Default = 0
+  int32 default = 6;
+  // (optional) The internal identifier of this coordinate system
+  int32 db_id = 7;
+  // (optional) Sets an alias for a coordsystem. If set it should only be set to 'chromosome'
+  string alias_to = 8;
 }
 
 message Gene {

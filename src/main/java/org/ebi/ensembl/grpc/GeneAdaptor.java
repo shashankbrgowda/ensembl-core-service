@@ -4,20 +4,20 @@ import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.grpc.gene.*;
-import org.ebi.ensembl.repo.CoreRepo;
+import org.ebi.ensembl.repo.GeneRepo;
 import org.ebi.ensembl.repo.handler.ConnectionParams;
 
 @GrpcService
 public class GeneAdaptor implements GeneSvc {
-  private final CoreRepo<Gene> geneCoreRepo;
+  private final GeneRepo geneRepo;
 
-  public GeneAdaptor(CoreRepo<Gene> geneCoreRepo) {
-    this.geneCoreRepo = geneCoreRepo;
+  public GeneAdaptor(GeneRepo geneRepo) {
+    this.geneRepo = geneRepo;
   }
 
   @Override
   public Uni<CountResponse> countAllByBioTypes(CountAllByBioTypesRequest request) {
-    return geneCoreRepo.countAllByBioTypes(
+    return geneRepo.countAllByBioTypes(
         ConnectionParams.mapConnectionParams(request.getParams()), request.getBioTypesList());
   }
 
@@ -108,7 +108,7 @@ public class GeneAdaptor implements GeneSvc {
 
   @Override
   public Uni<Gene> fetchByDbId(FetchByDbIdRequest request) {
-    return geneCoreRepo.findByDbId(ConnectionParams.mapConnectionParams(request.getParams()), request.getDbId());
+    return geneRepo.findByDbId(ConnectionParams.mapConnectionParams(request.getParams()), request.getDbId());
   }
 
   @Override

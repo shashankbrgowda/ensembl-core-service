@@ -7,10 +7,10 @@ option java_package = "org.ebi.ensembl.grpc.slice";
 option java_outer_classname = "SliceSvcProto";
 
 service SliceSvc {
-  rpc FetchAll(FetchAllRequest) returns (FetchAllResponse) {};
+  rpc FetchAll(FetchAllSliceRequest) returns (FetchAllSliceResponse) {};
 }
 
-message FetchAllRequest {
+message FetchAllSliceRequest {
   ConnectionParams params = 1;
   // The name of the coordinate system to retrieve slices of. This may be a name of an acutal coordinate system or an
   // alias to a coordinate system.  Valid aliases are 'seqlevel' or 'toplevel'.
@@ -28,6 +28,6 @@ message FetchAllRequest {
   optional bool include_lrg = 6;
 }
 
-message FetchAllResponse {
+message FetchAllSliceResponse {
   repeated Slice slices = 1;
 }
