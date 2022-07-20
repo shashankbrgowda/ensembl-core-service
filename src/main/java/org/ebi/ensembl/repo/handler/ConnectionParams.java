@@ -15,4 +15,14 @@ public class ConnectionParams {
   private String dbName;
   private String userName;
   private String password;
+
+  public static ConnectionParams mapConnectionParams(org.ebi.ensembl.grpc.common.ConnectionParams connectionParams) {
+    return ConnectionParams.builder()
+            .host(connectionParams.getHost())
+            .port(connectionParams.getPort())
+            .dbName(connectionParams.getDbName())
+            .userName(connectionParams.getUserName())
+            .password(connectionParams.getPassword())
+            .build();
+  }
 }

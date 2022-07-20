@@ -18,7 +18,7 @@ public class GeneAdaptor implements GeneSvc {
   @Override
   public Uni<CountResponse> countAllByBioTypes(CountAllByBioTypesRequest request) {
     return geneCoreRepo.countAllByBioTypes(
-        mapConnectionParams(request.getParams()), request.getBioTypesList());
+        ConnectionParams.mapConnectionParams(request.getParams()), request.getBioTypesList());
   }
 
   @Override
@@ -108,7 +108,7 @@ public class GeneAdaptor implements GeneSvc {
 
   @Override
   public Uni<Gene> fetchByDbId(FetchByDbIdRequest request) {
-    return geneCoreRepo.findByDbId(mapConnectionParams(request.getParams()), request.getDbId());
+    return geneCoreRepo.findByDbId(ConnectionParams.mapConnectionParams(request.getParams()), request.getDbId());
   }
 
   @Override
@@ -149,16 +149,5 @@ public class GeneAdaptor implements GeneSvc {
   @Override
   public Uni<StoreResponse> store(StoreRequest request) {
     return null;
-  }
-
-  private ConnectionParams mapConnectionParams(
-      org.ebi.ensembl.grpc.common.ConnectionParams connectionParams) {
-    return ConnectionParams.builder()
-        .host(connectionParams.getHost())
-        .port(connectionParams.getPort())
-        .dbName(connectionParams.getDbName())
-        .userName(connectionParams.getUserName())
-        .password(connectionParams.getPassword())
-        .build();
   }
 }
