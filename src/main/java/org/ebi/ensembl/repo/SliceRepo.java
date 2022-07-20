@@ -1,6 +1,6 @@
 package org.ebi.ensembl.repo;
 
-import org.ebi.ensembl.repo.handler.ConnectionHandler;
+import org.ebi.ensembl.handler.ConnectionHandler;
 
 import javax.enterprise.context.ApplicationScoped;
 

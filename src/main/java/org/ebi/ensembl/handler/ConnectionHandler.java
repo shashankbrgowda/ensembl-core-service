@@ -1,4 +1,4 @@
-package org.ebi.ensembl.repo.handler;
+package org.ebi.ensembl.handler;
 
 import io.vertx.mutiny.core.Vertx;
 import io.vertx.mutiny.sqlclient.Pool;

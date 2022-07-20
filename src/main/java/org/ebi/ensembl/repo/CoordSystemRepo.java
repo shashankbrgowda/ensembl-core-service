@@ -4,8 +4,8 @@ import io.smallrye.mutiny.Multi;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.Tuple;
 import org.ebi.ensembl.grpc.common.CoordSystem;
-import org.ebi.ensembl.repo.handler.ConnectionHandler;
-import org.ebi.ensembl.repo.handler.ConnectionParams;
+import org.ebi.ensembl.handler.ConnectionHandler;
+import org.ebi.ensembl.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;

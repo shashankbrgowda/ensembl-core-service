@@ -5,8 +5,8 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.grpc.gene.CountResponse;
-import org.ebi.ensembl.repo.handler.ConnectionHandler;
-import org.ebi.ensembl.repo.handler.ConnectionParams;
+import org.ebi.ensembl.handler.ConnectionHandler;
+import org.ebi.ensembl.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;

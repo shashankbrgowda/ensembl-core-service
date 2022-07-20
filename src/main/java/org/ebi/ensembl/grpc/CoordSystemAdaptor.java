@@ -7,7 +7,7 @@ import org.ebi.ensembl.grpc.common.CoordSystem;
 import org.ebi.ensembl.grpc.coord.*;
 import org.ebi.ensembl.repo.CoordSystemRepo;
 import org.ebi.ensembl.repo.SpeciesRepo;
-import org.ebi.ensembl.repo.handler.ConnectionParams;
+import org.ebi.ensembl.handler.ConnectionParams;
 import java.util.HashMap;
 import java.util.Map;
 
