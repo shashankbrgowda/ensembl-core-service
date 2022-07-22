@@ -56,10 +56,10 @@ public class CoordSystemRepo {
       String[] attribs = r.getString("attrib").split(",");
       for (String attrib : attribs) {
         if (Objects.equals(attrib, "sequence_level")) {
-          coordSysBuilder.setDefault(1);
+          coordSysBuilder.setSequenceLevel(1);
         }
         if (Objects.equals(attrib, "default_version")) {
-          coordSysBuilder.setSequenceLevel(1);
+          coordSysBuilder.setDefault(1);
         }
       }
     }
