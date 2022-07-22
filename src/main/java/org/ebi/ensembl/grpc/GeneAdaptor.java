@@ -5,7 +5,6 @@ import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.grpc.gene.*;
 import org.ebi.ensembl.repo.GeneRepo;
-import org.ebi.ensembl.handler.ConnectionParams;
 
 @GrpcService
 public class GeneAdaptor implements GeneSvc {
@@ -18,7 +17,7 @@ public class GeneAdaptor implements GeneSvc {
   @Override
   public Uni<CountResponse> countAllByBioTypes(CountAllByBioTypesRequest request) {
     return geneRepo.countAllByBioTypes(
-        ConnectionParams.mapConnectionParams(request.getParams()), request.getBioTypesList());
+        request.getRequestMetadata().getConnectionParams(), request.getBioTypesList());
   }
 
   @Override
@@ -108,7 +107,8 @@ public class GeneAdaptor implements GeneSvc {
 
   @Override
   public Uni<Gene> fetchByDbId(FetchByDbIdRequest request) {
-    return geneRepo.findByDbId(ConnectionParams.mapConnectionParams(request.getParams()), request.getDbId());
+    return geneRepo.findByDbId(
+        request.getRequestMetadata().getConnectionParams(), request.getDbId());
   }
 
   @Override

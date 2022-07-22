@@ -132,8 +132,7 @@ service GeneSvc {
 }
 
 message StoreRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The gene to store in the database
   Gene gene = 2;
@@ -154,8 +153,7 @@ message StoreResponse {
 }
 
 message FetchAllBySliceRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The slice to fetch genes on.
   Slice slice = 2;
@@ -174,24 +172,21 @@ message FetchAllBySliceRequest {
 }
 
 message FetchByTranslationStableIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The stable id of a translation of the gene to be obtained
   string translation_stable_id = 2;
 }
 
 message FetchByTranscriptStableIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // transcript stable ID whose gene should be retrieved
   string transcriptStableId = 2;
 }
 
 message FetchByTranscriptIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // Unique database identifier for the transcript whose gene should be
   // retrieved. The gene is returned in its native coord system (i.e. the coord_system it is
@@ -202,8 +197,7 @@ message FetchByTranscriptIdRequest {
 }
 
 message FetchByStableIdVersionRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The stable ID of the gene to retrieve
   string stable_id = 2;
@@ -213,40 +207,35 @@ message FetchByStableIdVersionRequest {
 }
 
 message FetchByStableIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The stable ID of the gene to retrieve
   string stable_id = 2;
 }
 
 message FetchByExonStableIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The stable id of an exon of the gene to retrieve
   string exon_stable_id = 2;
 }
 
 message FetchByDisplayLabelRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // display label of gene to fetch
   string display_label = 2;
 }
 
 message FetchAllVersionsByStableIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The stable ID of the gene to retrieve
   string stable_id = 2;
 }
 
 message FetchAllByTranscriptSupportingEvidenceRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // Name of supporting feature
   string hit_name = 2;
@@ -259,8 +248,7 @@ message FetchAllByTranscriptSupportingEvidenceRequest {
 }
 
 message FetchAllByStableIdListRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // Stable ID list
   repeated string stable_ids = 2;
@@ -270,16 +258,14 @@ message FetchAllByStableIdListRequest {
 }
 
 message FetchAllBySourcesRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The source of the gene to retrieve. You can have as an argument a reference to a list of sources
   repeated string sources = 2;
 }
 
 message FetchAllBySliceAndExternalDbNameLinkRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The slice to fetch genes on.
   Slice slice = 2;
@@ -295,8 +281,7 @@ message FetchAllBySliceAndExternalDbNameLinkRequest {
 }
 
 message FetchAllByOntologyLinkageTypeRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // (optional) The database name to search for. Defaults to GO
   optional string db_name = 2;
@@ -306,8 +291,7 @@ message FetchAllByOntologyLinkageTypeRequest {
 }
 
 message FetchAllByExternalNameRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The external identifier for the gene to be obtained
   string external_name = 2;
@@ -320,8 +304,7 @@ message FetchAllByExternalNameRequest {
 }
 
 message FetchAllByExonSupportingEvidenceRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // Name of supporting feature
   string hit_name = 2;
@@ -334,24 +317,21 @@ message FetchAllByExonSupportingEvidenceRequest {
 }
 
 message FetchAllByDisplayLabelRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // display label of genes to fetch
   string display_label = 2;
 }
 
 message FetchAllByDescriptionRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // String of description
   string description = 2;
 }
 
 message FetchAllByDbIdListRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The unique database identifiers for the features to be obtained.
   repeated int32 db_ids = 2;
@@ -361,16 +341,14 @@ message FetchAllByDbIdListRequest {
 }
 
 message FetchAllByBioTypesRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The biotype of the gene to retrieve.
   repeated string bio_types = 2;
 }
 
 message FetchAllAltAllelesRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The gene to fetch alternative alleles for
   Gene gene = 2;
@@ -389,16 +367,14 @@ message CountResponse {
 }
 
 message CountAllBySourcesRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The source of the gene to retrieve.
   repeated string sources = 2;
 }
 
 message CountAllBySliceRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The slice to count genes on.
   Slice slice = 2;
@@ -411,16 +387,14 @@ message CountAllBySliceRequest {
 }
 
 message CountAllByBioTypesRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The biotype of the gene to retrieve. You can have as an argument a reference to a list of biotypes
   repeated string bio_types = 2;
 }
 
 message FetchByDbIdRequest {
-  // Db connection parameters
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 
   // The unique database identifier for the feature to be obtained
   int32 db_id = 2;

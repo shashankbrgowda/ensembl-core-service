@@ -4,6 +4,7 @@ import io.vertx.mutiny.core.Vertx;
 import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.sqlclient.PoolOptions;
+import org.ebi.ensembl.grpc.common.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;

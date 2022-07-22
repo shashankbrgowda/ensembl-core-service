@@ -15,16 +15,16 @@ service CoordSystemSvc {
 }
 
 message EmptyRequest {
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
 }
 
 message FetchByNameRequest {
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
   string name = 2;
   optional string version = 3;
 }
 
 message FetchByRankRequest {
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
   int32 rank = 2;
 }

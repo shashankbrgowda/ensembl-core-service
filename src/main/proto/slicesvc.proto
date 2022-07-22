@@ -11,7 +11,7 @@ service SliceSvc {
 }
 
 message FetchAllSliceRequest {
-  ConnectionParams params = 1;
+  RequestMetadata request_metadata = 1;
   // The name of the coordinate system to retrieve slices of. This may be a name of an acutal coordinate system or an
   // alias to a coordinate system.  Valid aliases are 'seqlevel' or 'toplevel'.
   string coord_system_name = 2;

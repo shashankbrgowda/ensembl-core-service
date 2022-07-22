@@ -3,10 +3,10 @@ package org.ebi.ensembl.repo;
 import com.google.protobuf.ProtocolStringList;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
+import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.grpc.gene.CountResponse;
 import org.ebi.ensembl.handler.ConnectionHandler;
-import org.ebi.ensembl.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class GeneRepo {
   }
 
   public Uni<CountResponse> countAllByBioTypes(
-      ConnectionParams params, ProtocolStringList bioTypes) {
+          ConnectionParams params, ProtocolStringList bioTypes) {
     String bioTypesStr = "'" + String.join("','", new ArrayList<>(bioTypes)) + "'";
     return connectionHandler
         .pool(params)

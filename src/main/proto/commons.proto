@@ -13,16 +13,20 @@ message ConnectionParams {
   string db_name = 3;
   string user_name = 4;
   string password = 5;
-  RequestMetadata request_metadata = 6;
 }
 
-message RequestMetadata {
+message AdaptorMetadata {
   // ex: Human
   string species = 1;
   // ex: Core
   string group = 2;
   // ex: Gene
   string type = 3;
+}
+
+message RequestMetadata {
+  AdaptorMetadata adaptor_metadata = 1;
+  ConnectionParams connection_params = 2;
 }
 
 message Feature {

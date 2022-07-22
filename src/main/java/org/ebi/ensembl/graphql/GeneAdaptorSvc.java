@@ -2,9 +2,9 @@ package org.ebi.ensembl.graphql;
 
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.Gene;
+import org.ebi.ensembl.grpc.common.RequestMetadata;
 import org.ebi.ensembl.repo.GeneRepo;
 import org.ebi.ensembl.rest.model.GeneObj;
-import org.ebi.ensembl.handler.ConnectionParams;
 import org.eclipse.microprofile.graphql.Description;
 import org.eclipse.microprofile.graphql.GraphQLApi;
 import org.eclipse.microprofile.graphql.Name;
@@ -19,12 +19,13 @@ public class GeneAdaptorSvc {
     this.geneRepo = geneRepo;
   }
 
-  @Query("fetchByDbId")
+  // TODO: Jackson doesn't work for protoc generated classes.. need to DTO
+  /*@Query("fetchByDbId")
   @Description("Fetch gene by db identifier")
   public Uni<GeneObj> fetchByDbId(
-      @Name("dbId") Integer dbId, @Name("connectionParams") ConnectionParams connectionParams) {
-    return geneRepo.findByDbId(connectionParams, dbId).onItem().transform(this::mapToGeneObj);
-  }
+      @Name("dbId") Integer dbId, @Name("requestMetadata") RequestMetadata requestMetadata) {
+    return geneRepo.findByDbId(requestMetadata.getConnectionParams(), dbId).onItem().transform(this::mapToGeneObj);
+  }*/
 
   private GeneObj mapToGeneObj(Gene gene) {
     return GeneObj.builder()

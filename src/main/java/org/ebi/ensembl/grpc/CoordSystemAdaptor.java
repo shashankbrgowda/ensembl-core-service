@@ -5,11 +5,13 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.grpc.common.CoordSystem;
+import org.ebi.ensembl.grpc.common.RequestMetadata;
 import org.ebi.ensembl.grpc.coord.*;
 import org.ebi.ensembl.repo.CoordSystemRepo;
 import org.ebi.ensembl.repo.SpeciesRepo;
-import org.ebi.ensembl.handler.ConnectionParams;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,23 +32,23 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
 
   @Override
   public Multi<CoordSystem> fetchAll(EmptyRequest request) {
-    ConnectionParams connectionParams = ConnectionParams.mapConnectionParams(request.getParams());
-    String speciesName = connectionParams.getRequestMetadata().getSpecies();
+    ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
+    String speciesName = request.getRequestMetadata().getAdaptorMetadata().getSpecies();
     return speciesRepo
         .fetchSpeciesId(connectionParams, speciesName)
         .onItem()
-        .transformToMulti(
-            speciesId -> coordSystemRepo.fetchAll(connectionParams, speciesId));
+        .transformToMulti(speciesId -> coordSystemRepo.fetchAll(connectionParams, speciesId));
   }
 
   @Override
   public Uni<CoordSystem> fetchByRank(FetchByRankRequest request) {
     int rank = request.getRank();
-    ConnectionParams connectionParams = ConnectionParams.mapConnectionParams(request.getParams());
-    String speciesName = connectionParams.getRequestMetadata().getSpecies();
+    RequestMetadata requestMetadata = request.getRequestMetadata();
+    ConnectionParams connectionParams = requestMetadata.getConnectionParams();
+    String speciesName = requestMetadata.getAdaptorMetadata().getSpecies();
 
     if (rank == 0) {
-      return fetchTopLevel(EmptyRequest.newBuilder().setParams(request.getParams()).build());
+      return fetchTopLevel(EmptyRequest.newBuilder().setRequestMetadata(requestMetadata).build());
     }
 
     return speciesRepo
@@ -61,7 +63,8 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
     String name = request.getName().toLowerCase();
     String version = request.getVersion();
 
-    EmptyRequest emptyRequest = EmptyRequest.newBuilder().setParams(request.getParams()).build();
+    EmptyRequest emptyRequest =
+        EmptyRequest.newBuilder().setRequestMetadata(request.getRequestMetadata()).build();
     if (Objects.equals(name, "seqlevel")) {
       return fetchSequenceLevel(emptyRequest);
     } else if (Objects.equals(name, "toplevel")) {
@@ -96,10 +99,11 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
   @Override
   public Uni<CoordSystem> fetchSequenceLevel(EmptyRequest request) {
     return fetchAll(request)
-            .collect()
-            .asList()
-            .onItem()
-            .transformToUni(coordSystemList -> {
+        .collect()
+        .asList()
+        .onItem()
+        .transformToUni(
+            coordSystemList -> {
               int sequenceLevelCount = 0;
               CoordSystem coordSystem = null;
               for (CoordSystem cs : coordSystemList) {

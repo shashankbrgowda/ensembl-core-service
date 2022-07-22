@@ -5,9 +5,9 @@ import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.Tuple;
+import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.grpc.common.CoordSystem;
 import org.ebi.ensembl.handler.ConnectionHandler;
-import org.ebi.ensembl.handler.ConnectionParams;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;

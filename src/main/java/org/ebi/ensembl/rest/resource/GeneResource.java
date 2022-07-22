@@ -1,10 +1,8 @@
 package org.ebi.ensembl.rest.resource;
 
-import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.Gene;
 import org.ebi.ensembl.repo.GeneRepo;
 import org.ebi.ensembl.rest.model.GeneObj;
-import org.ebi.ensembl.handler.ConnectionParams;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,11 +19,11 @@ public class GeneResource {
   }
 
   // TODO: Jackson doesn't work for protoc generated classes.. need to DTO
-  @POST
+  /*@POST
   @Path("{dbId}")
-  public Uni<GeneObj> gene(@PathParam("dbId") Integer dbId, ConnectionParams connectionParams) {
-    return geneRepo.findByDbId(connectionParams, dbId).onItem().transform(this::mapToGeneObj);
-  }
+  public Uni<GeneObj> gene(@PathParam("dbId") Integer dbId, RequestMetadata requestMetadata) {
+    return geneRepo.findByDbId(requestMetadata.getConnectionParams(), dbId).onItem().transform(this::mapToGeneObj);
+  }*/
 
   @GET
   @Path("download")
