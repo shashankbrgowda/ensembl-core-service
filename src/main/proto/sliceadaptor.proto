@@ -4,9 +4,9 @@ import "commons.proto";
 
 option java_multiple_files = true;
 option java_package = "org.ebi.ensembl.grpc.slice";
-option java_outer_classname = "SliceSvcProto";
+option java_outer_classname = "SliceAdaptorProto";
 
-service SliceSvc {
+service SliceAdaptor {
   rpc FetchAll(FetchAllSliceRequest) returns (FetchAllSliceResponse) {};
 }
 

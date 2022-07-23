@@ -16,14 +16,14 @@ import java.util.Map;
 
 // TODO: Generic cache of coord system
 @GrpcService
-public class CoordSystemAdaptor implements CoordSystemSvc {
+public class CoordSystemAdaptorImpl implements CoordSystemAdaptor {
   private final Map<Integer, CoordSystem> RANK_CACHE = new HashMap<>();
   private final Map<String, CoordSystem> NAME_CACHE = new HashMap<>();
 
   private final CoordSystemRepo coordSystemRepo;
   private final SpeciesRepo speciesRepo;
 
-  public CoordSystemAdaptor(CoordSystemRepo coordSystemRepo, SpeciesRepo speciesRepo) {
+  public CoordSystemAdaptorImpl(CoordSystemRepo coordSystemRepo, SpeciesRepo speciesRepo) {
     this.coordSystemRepo = coordSystemRepo;
     this.speciesRepo = speciesRepo;
   }

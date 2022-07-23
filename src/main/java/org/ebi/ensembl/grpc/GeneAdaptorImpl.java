@@ -7,10 +7,10 @@ import org.ebi.ensembl.grpc.gene.*;
 import org.ebi.ensembl.repo.GeneRepo;
 
 @GrpcService
-public class GeneAdaptor implements GeneSvc {
+public class GeneAdaptorImpl implements GeneAdaptor {
   private final GeneRepo geneRepo;
 
-  public GeneAdaptor(GeneRepo geneRepo) {
+  public GeneAdaptorImpl(GeneRepo geneRepo) {
     this.geneRepo = geneRepo;
   }
 

@@ -4,9 +4,9 @@ import "commons.proto";
 
 option java_multiple_files = true;
 option java_package = "org.ebi.ensembl.grpc.coord";
-option java_outer_classname = "CoordSystemSvcProto";
+option java_outer_classname = "CoordSystemAdaptorProto";
 
-service CoordSystemSvc {
+service CoordSystemAdaptor {
   rpc FetchAll(EmptyRequest) returns (stream CoordSystem) {};
   rpc FetchByRank(FetchByRankRequest) returns (CoordSystem) {};
   rpc FetchByName(FetchByNameRequest) returns (CoordSystem) {};

@@ -4,9 +4,9 @@ import "commons.proto";
 
 option java_multiple_files = true;
 option java_package = "org.ebi.ensembl.grpc.gene";
-option java_outer_classname = "GeneSvcProto";
+option java_outer_classname = "GeneAdaptorProto";
 
-service GeneSvc {
+service GeneAdaptor {
   // Retrieves count of gene objects from the database via its biotype or biotypes.
   rpc CountAllByBioTypes(CountAllByBioTypesRequest) returns (CountResponse) {};
 
