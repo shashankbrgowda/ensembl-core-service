@@ -24,6 +24,8 @@ message AdaptorMetadata {
   string type = 3;
 }
 
+// To be queried from python and added: species id, db metadata(db name, tables and meta table) based
+// on passed adaptor metadata
 message RequestMetadata {
   AdaptorMetadata adaptor_metadata = 1;
   ConnectionParams connection_params = 2;
@@ -59,12 +61,13 @@ message Analysis {
 }
 
 message Slice {
-  string coord_system = 1;
+  CoordSystem coord_system = 1;
   int32 start = 2;
   int32 end = 3;
   int32 strand = 4;
-  string seq_region_name = 5;
-  int32 seq_region_length = 6;
+  int32 seq_region_id = 5;
+  string seq_region_name = 6;
+  int32 seq_region_length = 7;
 }
 
 message CoordSystem {

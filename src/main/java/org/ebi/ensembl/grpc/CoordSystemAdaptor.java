@@ -3,7 +3,6 @@ package org.ebi.ensembl.grpc;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.grpc.common.CoordSystem;
@@ -14,9 +13,8 @@ import org.ebi.ensembl.repo.SpeciesRepo;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-@Slf4j
+// TODO: Generic cache of coord system
 @GrpcService
 public class CoordSystemAdaptor implements CoordSystemSvc {
   private final Map<Integer, CoordSystem> RANK_CACHE = new HashMap<>();
@@ -34,6 +32,7 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
   public Multi<CoordSystem> fetchAll(EmptyRequest request) {
     ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
     String speciesName = request.getRequestMetadata().getAdaptorMetadata().getSpecies();
+    // TODO: Species Id should be passed as metadata from python/Other clients.. Fetch metadata during adaptor creation
     return speciesRepo
         .fetchSpeciesId(connectionParams, speciesName)
         .onItem()
@@ -51,6 +50,7 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
       return fetchTopLevel(EmptyRequest.newBuilder().setRequestMetadata(requestMetadata).build());
     }
 
+    // TODO: Species Id should be passed as metadata from python/Other clients..
     return speciesRepo
         .fetchSpeciesId(connectionParams, speciesName)
         .onItem()
@@ -60,14 +60,14 @@ public class CoordSystemAdaptor implements CoordSystemSvc {
 
   @Override
   public Uni<CoordSystem> fetchByName(FetchByNameRequest request) {
-    String name = request.getName().toLowerCase();
+    String name = request.getName();
     String version = request.getVersion();
 
     EmptyRequest emptyRequest =
         EmptyRequest.newBuilder().setRequestMetadata(request.getRequestMetadata()).build();
-    if (Objects.equals(name, "seqlevel")) {
+    if (StringUtils.equalsIgnoreCase(name, "seqlevel")) {
       return fetchSequenceLevel(emptyRequest);
-    } else if (Objects.equals(name, "toplevel")) {
+    } else if (StringUtils.equalsIgnoreCase(name, "toplevel")) {
       return fetchTopLevel(emptyRequest);
     }
 
