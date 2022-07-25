@@ -25,19 +25,33 @@ service SliceAdaptor {
   // For example fetch_by_region('clone', 'AC008066') will retrieve the sequence_region with name 'AC008066.4'.
   // The fuzzy matching can be turned off by setting the $no_fuzz argument to a true value. If the requested seq_region
   // is not found in the database undef is returned.
-  rpc FetchByRegion(FetchByRegionRequest) returns (Slice) {};
+  rpc FetchByRegion(FetchBySliceRegionRequest) returns (Slice) {};
+
+  // Fetches a slice using a slice name (i.e. the value returned by the Slice::name method).  This is useful if you wish to
+  // store a unique identifier for a slice in a file or database or pass a slice over a network.
+  // Slice::name allows you to serialise/marshall a slice and this method allows you to deserialise/unmarshal it.
+  // Returns undef if no seq_region with the provided name exists in the database.
+  rpc FetchByName(FetchBySliceNameRequest) returns (Slice) {};
 }
 
-message FetchByRegionRequest {
+message FetchBySliceNameRequest {
+  RequestMetadata request_metadata = 1;
+  // $name  = 'chromosome:NCBI34:X:1000000:2000000:1';
+  // $slice = $slice_adaptor->fetch_by_name($name);
+  // $slice2 = $slice_adaptor->fetch_by_name($slice3->name());
+  string name = 2;
+}
+
+message FetchBySliceRegionRequest {
   RequestMetadata request_metadata = 1;
 
-  // The name of the coordinate system of the slice to be created
+  // (Required) The name of the coordinate system of the slice to be created
   // This may be a name of an actual coordinate system or an alias
   // to a coordinate system.  Valid aliases are 'seqlevel' or
   // 'toplevel'.
   string coord_system_name = 2;
 
-  // The name of the sequence region that the slice will be
+  // (Required) The name of the sequence region that the slice will be
   // created on.
   string seq_region_name = 3;
 
@@ -69,11 +83,6 @@ message FetchAllSliceRequest {
   // If this argument is not provided then only reference slices will be returned. If set, both reference and non
   // reference slices will be returned.
   optional bool include_non_reference = 4;
-
-  //  If set duplicate regions will be returned. NOTE: if you do not use this option and you have a
-  //  PAR (pseudo-autosomal region) at the beginning of your seq_region then your slice will not start at position 1,
-  //  so coordinates retrieved from this slice might not be what you expected.
-  optional int32 include_duplicates = 5;
 
   // If set lrg regions will be returned aswell.
   optional bool include_lrg = 6;

@@ -16,7 +16,7 @@ import javax.ws.rs.core.Application;
             version = "1.0.0",
             contact = @Contact(name = "shabr@ebi.ac.uk", email = "shabr@ebi.ac.uk"),
             description =
-                "Ensembl Core Service is the new gRPC layer equivalent of Ensembl Perl API, It exposes all perl adaptors as gRPC endpoints",
+                "Ensembl Core Service is the new gRPC layer equivalent of Ensembl Perl API, It exposes perl adaptors as gRPC endpoints",
             license =
                 @License(
                     name = "Apache 2.0",

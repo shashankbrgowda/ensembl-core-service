@@ -8,11 +8,8 @@ import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.grpc.common.RequestMetadata;
 import org.ebi.ensembl.grpc.common.Slice;
 import org.ebi.ensembl.grpc.coord.CoordSystemAdaptor;
-import org.ebi.ensembl.grpc.coord.FetchByNameRequest;
-import org.ebi.ensembl.grpc.slice.FetchAllSliceRequest;
-import org.ebi.ensembl.grpc.slice.FetchAllSliceResponse;
-import org.ebi.ensembl.grpc.slice.FetchByRegionRequest;
-import org.ebi.ensembl.grpc.slice.SliceAdaptor;
+import org.ebi.ensembl.grpc.coord.FetchByCoordSystemNameRequest;
+import org.ebi.ensembl.grpc.slice.*;
 import org.ebi.ensembl.repo.SequenceRegionRepo;
 import org.ebi.ensembl.repo.SpeciesRepo;
 import org.ebi.ensembl.util.MutinyUtil;
@@ -23,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+// TODO: Error handling
 @GrpcService
 public class SliceAdaptorImpl implements SliceAdaptor {
   @GrpcClient CoordSystemAdaptor coordSystemAdaptor;
@@ -31,25 +29,16 @@ public class SliceAdaptorImpl implements SliceAdaptor {
 
   @Inject SpeciesRepo speciesRepo;
 
+  // TODO: assembly exception table..
   @Override
   public Uni<FetchAllSliceResponse> fetchAll(FetchAllSliceRequest request) {
-    String coordSystemName = request.getCoordSystemName();
-    String coordSystemVersion = request.getCoordSystemVersion();
-    boolean includeNonRef = request.getIncludeNonReference();
-    boolean includeLrg = request.getIncludeLrg();
-    // TODO: include duplicates argument, assembly exception table.. include duplicates
-    int includeDuplicates = request.getIncludeDuplicates();
-
     RequestMetadata requestMetadata = request.getRequestMetadata();
-    ConnectionParams connectionParams = requestMetadata.getConnectionParams();
-    String speciesName = requestMetadata.getAdaptorMetadata().getSpecies();
-    FetchByNameRequest fetchByNameRequest =
-        FetchByNameRequest.newBuilder()
+    FetchByCoordSystemNameRequest fetchByNameRequest =
+        FetchByCoordSystemNameRequest.newBuilder()
             .setRequestMetadata(requestMetadata)
-            .setName(coordSystemName)
-            .setVersion(coordSystemVersion)
+            .setName(request.getCoordSystemName())
+            .setVersion(request.getCoordSystemVersion())
             .build();
-
     AtomicReference<String> sql =
         new AtomicReference<>(
             "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, "
@@ -58,22 +47,91 @@ public class SliceAdaptorImpl implements SliceAdaptor {
                 + "at.attrib_type_id = sra.attrib_type_id AND sr.coord_system_id = cs.coord_system_id AND cs.species_id = %d");
 
     return speciesRepo
-        .fetchSpeciesId(connectionParams, speciesName)
+        .fetchSpeciesId(
+            requestMetadata.getConnectionParams(),
+            requestMetadata.getAdaptorMetadata().getSpecies())
         .onItem()
         .transformToUni(
             speciesId ->
                 mergeAndFilterLrgNonRefSlices(
                     speciesId,
-                    connectionParams,
-                    includeNonRef,
-                    includeLrg,
+                    requestMetadata.getConnectionParams(),
+                    request.getIncludeNonReference(),
+                    request.getIncludeLrg(),
                     sql,
                     fetchByNameRequest));
   }
 
+  // TODO: Circular slice, Caching, Karyotype stuff
   @Override
-  public Uni<Slice> fetchByRegion(FetchByRegionRequest request) {
-    return null;
+  public Uni<Slice> fetchByRegion(FetchBySliceRegionRequest request) {
+    int start = request.getStart() != 0 ? request.getStart() : 1;
+    int strand = request.getStrand() != 0 ? request.getStrand() : 1;
+    int end = request.getEnd();
+
+    if (!request.getCoordSystemName().isEmpty()) {
+      FetchByCoordSystemNameRequest fetchByNameRequest =
+          FetchByCoordSystemNameRequest.newBuilder()
+              .setRequestMetadata(request.getRequestMetadata())
+              .setName(request.getCoordSystemName())
+              .setVersion(request.getVersion())
+              .build();
+      return coordSystemAdaptor
+          .fetchByName(fetchByNameRequest)
+          .onItem()
+          .transformToUni(
+              cs ->
+                  sequenceRegionRepo
+                      .fetchSeqRegionByNameAndCoordSysId(
+                          request.getRequestMetadata().getConnectionParams(),
+                          request.getSeqRegionName(),
+                          cs.getDbId())
+                      .onItem()
+                      .transform(
+                          slice -> {
+                            if (slice == null) {
+                              return null;
+                            }
+                            Slice.Builder builder = slice.toBuilder();
+                            builder.setCoordSystem(cs);
+                            if (start != 1) {
+                              builder.setStart(start);
+                            }
+                            if (strand != 1) {
+                              builder.setStrand(strand);
+                            }
+                            if (end != 0) {
+                              builder.setEnd(end);
+                            }
+                            return builder.build();
+                          }));
+    }
+
+    return Uni.createFrom().nullItem();
+  }
+
+  @Override
+  public Uni<Slice> fetchByName(FetchBySliceNameRequest request) {
+    String sliceName = request.getName();
+    String[] args = sliceName.split(":");
+
+    // TODO: throw error
+    if (args.length != 6) {
+      return Uni.createFrom().nullItem();
+    }
+
+    FetchBySliceRegionRequest fetchBySliceRegionRequest =
+        FetchBySliceRegionRequest.newBuilder()
+            .setRequestMetadata(request.getRequestMetadata())
+            .setCoordSystemName(args[0])
+            .setVersion(args[1])
+            .setSeqRegionName(args[2])
+            .setStart(Integer.parseInt(args[3]))
+            .setEnd(Integer.parseInt(args[4]))
+            .setStrand(Integer.parseInt(args[5]))
+            .build();
+
+    return fetchByRegion(fetchBySliceRegionRequest);
   }
 
   private Uni<FetchAllSliceResponse> mergeAndFilterLrgNonRefSlices(
@@ -82,7 +140,7 @@ public class SliceAdaptorImpl implements SliceAdaptor {
       boolean includeNonRef,
       boolean includeLrg,
       AtomicReference<String> sql,
-      FetchByNameRequest fetchByNameRequest) {
+      FetchByCoordSystemNameRequest fetchByNameRequest) {
     Multi<Slice> lrgNonRefSlices =
         lrgNonRefSlices(connectionParams, speciesId, includeLrg, includeNonRef, sql);
     return coordSystemAdaptor
@@ -104,7 +162,7 @@ public class SliceAdaptorImpl implements SliceAdaptor {
                             String sqlStr =
                                 "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, "
                                     + "cs.name as cs_name, cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs "
-                                    + "WHERE sr.coord_system_id = cs.coord_system_id AND cs.coord_system_id = %d";
+                                    + "WHERE sr.coord_system_id = cs.coord_system_id AND sr.coord_system_id = %d";
                             sliceMulti =
                                 sequenceRegionRepo.genericFetch(
                                     connectionParams, String.format(sqlStr, coordSystem.getDbId()));

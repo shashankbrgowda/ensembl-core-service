@@ -12,6 +12,7 @@ import org.ebi.ensembl.handler.ConnectionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
+// TODO: Error handling
 @ApplicationScoped
 public class CoordSystemRepo {
   private final ConnectionHandler connectionHandler;

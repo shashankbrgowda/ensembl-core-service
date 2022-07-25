@@ -131,3 +131,11 @@ message Gene {
   string modified_date = 19;
 }
 
+message CountResponse {
+  // count of result set
+  int32 count = 1;
+}
+
+message EmptyRequest {
+  RequestMetadata request_metadata = 1;
+}

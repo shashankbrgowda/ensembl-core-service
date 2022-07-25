@@ -8,25 +8,7 @@ option java_outer_classname = "GeneAdaptorProto";
 
 service GeneAdaptor {
   // Retrieves count of gene objects from the database via its biotype or biotypes.
-  rpc CountAllByBioTypes(CountAllByBioTypesRequest) returns (CountResponse) {};
-
-  // Method to count genes on a given slice, filtering by biotype and source
-  rpc CountAllBySlice(CountAllBySliceRequest) returns (CountResponse) {};
-
-  // Retrieves count of gene objects from the database via its source or sources.
-  rpc CountAllBySources(CountAllBySourcesRequest) returns (CountResponse) {};
-
-  // Retrieves genes which are alternate alleles to a provided gene. Alternate alleles in Ensembl
-  // are genes which are similar and are on an alternative haplotype of the same region. There are
-  // not currently very many of these. This method will return a reference to an empty list if no
-  // alternative alleles are found.
-  rpc FetchAllAltAlleles(FetchAllAltAllelesRequest) returns (MultiGeneResponse) {};
-
-  // Retrieves an array reference of gene objects from the database via its biotype or biotypes. The
-  // genes will be retrieved in its native coordinate system (i.e. in the coordinate system it is
-  // stored in the database). It may be converted to a different coordinate system through a call to
-  // transform() or transfer(). If the gene or exon is not found undef is returned instead.
-  rpc FetchAllByBioTypes(FetchAllByBioTypesRequest) returns (MultiGeneResponse) {};
+  rpc CountAllByBioTypes(CountAllGenesByBioTypesRequest) returns (CountResponse) {};
 
   // TODO: BASE ADAPTOR Returns the features created from the database defined by the the IDs in
   // contained in the provided ID list $id_list. The features will be returned in their native
@@ -34,125 +16,41 @@ service GeneAdaptor {
   // order to convert the features to a particular coordinate system use the transfer() or
   // transform() method. If none of the features are found in the database a reference to an empty
   // list is returned.
-  rpc FetchAllByDbIdList(FetchAllByDbIdListRequest) returns (MultiGeneResponse) {};
-
-  // Fetches genes by their textual description. Fully supports SQL wildcards, since getting an
-  // exact hit is unlikely.
-  rpc FetchAllByDescription(FetchAllByDescriptionRequest) returns (MultiGeneResponse) {};
-
-  // Returns all genes which have the given display label or undef if there are none.
-  rpc FetchAllByDisplayLabel(FetchAllByDisplayLabelRequest) returns (MultiGeneResponse) {};
-
-  // Gets all the genes with transcripts with exons which have a specified hit on a particular type
-  // of feature. Optionally filter by analysis.
-  rpc FetchAllByExonSupportingEvidence(FetchAllByExonSupportingEvidenceRequest) returns (MultiGeneResponse) {};
-
-  // Retrieves a list of genes with an external database identifier externalName. The genes returned
-  // are in their native coordinate system, i.e. in the coordinate system they are stored in the
-  // database in. If another coordinate system is required then the Gene::transfer or
-  // Gene::transform method can be used. SQL wildcards % and _ are supported in the externalName,
-  // but their use is somewhat restricted for performance reasons. Users that really do want % and _
-  // in the first three characters should use argument 4 (sqlOverride) to prevent optimisations
-  rpc FetchAllByExternalName(FetchAllByExternalNameRequest) returns (MultiGeneResponse) {};
-
-  // Retrieves a list of genes that are associated with the given ontology linkage type. The genes
-  // returned are in their native coordinate system, i.e. in the coordinate system in which they are
-  // stored in the database.
-  rpc FetchAllByOntologyLinkageType(FetchAllByOntologyLinkageTypeRequest) returns (MultiGeneResponse) {};
+  rpc FetchAllByDbIdList(FetchAllGenesByDbIdListRequest) returns (MultiGeneResponse) {};
 
   // Overrides superclass method to optionally load transcripts immediately rather than lazy-loading
   // them later. This is more efficient when there are a lot of genes whose transcripts are going to
   // be used.
-  rpc FetchAllBySlice(FetchAllBySliceRequest) returns (MultiGeneResponse) {};
-
-  // Overrides superclass method to optionally load transcripts immediately rather than lazy-loading
-  // them later. This is more efficient when there are a lot of genes whose transcripts are going to
-  // be used. The genes are then filtered to return only those with external database links of the
-  // type specified
-  rpc FetchAllBySliceAndExternalDbNameLink(FetchAllBySliceAndExternalDbNameLinkRequest) returns (MultiGeneResponse) {};
-
-  // Retrieves an array reference of gene objects from the database via its source or sources. The
-  // gene will be retrieved in its native coordinate system (i.e. in the coordinate system it is
-  // stored in the database). It may be converted to a different coordinate system through a call to
-  // transform() or transfer(). If the gene or exon is not found undef is returned instead.
-  rpc FetchAllBySources(FetchAllBySourcesRequest) returns (MultiGeneResponse) {};
+  rpc FetchAllBySlice(FetchAllGenesBySliceRequest) returns (MultiGeneResponse) {};
 
   // Returns a listref of features identified by their stable IDs. This method only fetches features
   // of the same type as the calling adaptor. Results are constrained to a slice if the slice is
   // provided.
-  rpc FetchAllByStableIdList(FetchAllByStableIdListRequest) returns (MultiGeneResponse) {};
-
-  // Gets all the genes with transcripts with evidence for a specified hit on a particular type of
-  // feature. Optionally filter by analysis.
-  rpc FetchAllByTranscriptSupportingEvidence(FetchAllByTranscriptSupportingEvidenceRequest) returns (MultiGeneResponse) {};
-
-  // Similar to fetch_by_stable_id, but retrieves all versions of a gene stored in the database.
-  rpc FetchAllVersionsByStableId(FetchAllVersionsByStableIdRequest) returns (MultiGeneResponse) {};
+  rpc FetchAllByStableIdList(FetchAllGenesByStableIdListRequest) returns (MultiGeneResponse) {};
 
   // Returns the feature created from the database defined by the the id $id. The feature will be
   // returned in its native coordinate system. That is, the coordinate system in which it is stored
   // in the database. In order to convert it to a particular coordinate system use the transfer() or
   // transform() method. If the feature is not found in the database then undef is returned instead
-  rpc FetchByDbId(FetchByDbIdRequest) returns (Gene) {};
-
-  // Returns the gene which has the given display label or undef if there is none. If there are more
-  // than 1, the gene on the reference slice is reported or if none are on the reference, the first
-  // one is reported.
-  rpc FetchByDisplayLabel(FetchByDisplayLabelRequest) returns (Gene) {};
-
-  // Retrieves a gene object from the database via an exon stable id. The gene will be retrieved in
-  // its native coordinate system (i.e. in the coordinate system it is stored in the database). It
-  // may be converted to a different coordinate system through a call to transform() or transfer().
-  // If the gene or exon is not found undef is returned instead.
-  rpc FetchByExonStableId(FetchByExonStableIdRequest) returns (Gene) {};
+  rpc FetchByDbId(FetchGeneByDbIdRequest) returns (Gene) {};
 
   // Retrieves a gene object from the database via its stable id. The gene will be retrieved in its
   // native coordinate system (i.e. in the coordinate system it is stored in the database). It may
   // be converted to a different coordinate system through a call to transform() or transfer(). If
   // the gene or exon is not found undef is returned instead.
-  rpc FetchByStableId(FetchByStableIdRequest) returns (Gene) {};
-
-  // Retrieves a gene object from the database via its stable id and version. The gene will be
-  // retrieved in its native coordinate system (i.e. in the coordinate system it is stored in the
-  // database). It may be converted to a different coordinate system through a call to transform()
-  // or transfer(). If the gene or exon is not found undef is returned instead.
-  rpc FetchByStableIdVersion(FetchByStableIdVersionRequest) returns (Gene) {};
+  rpc FetchByStableId(FetchGeneByStableIdRequest) returns (Gene) {};
 
   // Retrieves a gene from the database via the database identifier of one of its transcripts.
-  rpc FetchByTranscriptId(FetchByTranscriptIdRequest) returns (Gene) {};
+  rpc FetchByTranscriptId(FetchGeneByTranscriptIdRequest) returns (Gene) {};
 
   // Retrieves a gene from the database via the stable ID of one of its transcripts
-  rpc FetchByTranscriptStableId(FetchByTranscriptStableIdRequest) returns (Gene);
+  rpc FetchByTranscriptStableId(FetchGeneByTranscriptStableIdRequest) returns (Gene);
 
   // Retrieves a gene via the stable id of one of its translations.
-  rpc FetchByTranslationStableId(FetchByTranslationStableIdRequest) returns (Gene);
-
-  // Stores a gene in the database.
-  rpc Store(StoreRequest) returns (StoreResponse) {};
+  rpc FetchByTranslationStableId(FetchGeneByTranslationStableIdRequest) returns (Gene);
 }
 
-message StoreRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The gene to store in the database
-  Gene gene = 2;
-
-  // ignore_release in xrefs [default 1] set to 0 to use release info in external database references
-  bool ignore_release_in_xref = 3;
-
-  // prevent coordinate recalculation if you are persisting transcripts with this gene
-  bool prevent_coord_recalc = 4;
-
-  // prevent copying supporting features across exons increased speed for lost accuracy
-  bool prevent_support_features_copy = 5;
-}
-
-// the database identifier of the newly stored gene
-message StoreResponse {
-  int32 db_id = 1;
-}
-
-message FetchAllBySliceRequest {
+message FetchAllGenesBySliceRequest {
   RequestMetadata request_metadata = 1;
 
   // The slice to fetch genes on.
@@ -171,21 +69,21 @@ message FetchAllBySliceRequest {
   optional string bio_type = 6;
 }
 
-message FetchByTranslationStableIdRequest {
+message FetchGeneByTranslationStableIdRequest {
   RequestMetadata request_metadata = 1;
 
   // The stable id of a translation of the gene to be obtained
   string translation_stable_id = 2;
 }
 
-message FetchByTranscriptStableIdRequest {
+message FetchGeneByTranscriptStableIdRequest {
   RequestMetadata request_metadata = 1;
 
   // transcript stable ID whose gene should be retrieved
   string transcriptStableId = 2;
 }
 
-message FetchByTranscriptIdRequest {
+message FetchGeneByTranscriptIdRequest {
   RequestMetadata request_metadata = 1;
 
   // Unique database identifier for the transcript whose gene should be
@@ -196,7 +94,7 @@ message FetchByTranscriptIdRequest {
   string transcript_id = 2;
 }
 
-message FetchByStableIdVersionRequest {
+message FetchGeneByStableIdVersionRequest {
   RequestMetadata request_metadata = 1;
 
   // The stable ID of the gene to retrieve
@@ -206,48 +104,14 @@ message FetchByStableIdVersionRequest {
   int32 version = 3;
 }
 
-message FetchByStableIdRequest {
+message FetchGeneByStableIdRequest {
   RequestMetadata request_metadata = 1;
 
   // The stable ID of the gene to retrieve
   string stable_id = 2;
 }
 
-message FetchByExonStableIdRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The stable id of an exon of the gene to retrieve
-  string exon_stable_id = 2;
-}
-
-message FetchByDisplayLabelRequest {
-  RequestMetadata request_metadata = 1;
-
-  // display label of gene to fetch
-  string display_label = 2;
-}
-
-message FetchAllVersionsByStableIdRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The stable ID of the gene to retrieve
-  string stable_id = 2;
-}
-
-message FetchAllByTranscriptSupportingEvidenceRequest {
-  RequestMetadata request_metadata = 1;
-
-  // Name of supporting feature
-  string hit_name = 2;
-
-  // One of "dna_align_feature" or "protein_align_feature"
-  string feature_type = 3;
-
-  // (optional) Analysis
-  optional Analysis analysis = 4;
-}
-
-message FetchAllByStableIdListRequest {
+message FetchAllGenesByStableIdListRequest {
   RequestMetadata request_metadata = 1;
 
   // Stable ID list
@@ -257,80 +121,7 @@ message FetchAllByStableIdListRequest {
   Slice slice = 3;
 }
 
-message FetchAllBySourcesRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The source of the gene to retrieve. You can have as an argument a reference to a list of sources
-  repeated string sources = 2;
-}
-
-message FetchAllBySliceAndExternalDbNameLinkRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The slice to fetch genes on.
-  Slice slice = 2;
-
-  // Name of the external database to fetch the Genes by
-  string external_db_name = 3;
-
-  // (optional) the logic name of the type of features to obtain
-  optional string logic_name = 4;
-
-  // (optional) if true, transcripts will be loaded immediately rather than lazy loaded later.
-  optional bool load_transcripts = 5;
-}
-
-message FetchAllByOntologyLinkageTypeRequest {
-  RequestMetadata request_metadata = 1;
-
-  // (optional) The database name to search for. Defaults to GO
-  optional string db_name = 2;
-
-  // Linkage type to search for e.g. IMP
-  string linkage_type = 3;
-}
-
-message FetchAllByExternalNameRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The external identifier for the gene to be obtained
-  string external_name = 2;
-
-  // (optional) The name of the external database from which the identifier originates.
-  optional string external_db_name = 3;
-
-  // Boolean override. Force SQL regex matching for users who really do want to find all 'NM%'
-  bool sql_override = 4;
-}
-
-message FetchAllByExonSupportingEvidenceRequest {
-  RequestMetadata request_metadata = 1;
-
-  // Name of supporting feature
-  string hit_name = 2;
-
-  // one of "dna_align_feature" or "protein_align_feature"
-  string feature_type = 3;
-
-  // (optional) Analysis
-  optional Analysis analysis = 4;
-}
-
-message FetchAllByDisplayLabelRequest {
-  RequestMetadata request_metadata = 1;
-
-  // display label of genes to fetch
-  string display_label = 2;
-}
-
-message FetchAllByDescriptionRequest {
-  RequestMetadata request_metadata = 1;
-
-  // String of description
-  string description = 2;
-}
-
-message FetchAllByDbIdListRequest {
+message FetchAllGenesByDbIdListRequest {
   RequestMetadata request_metadata = 1;
 
   // The unique database identifiers for the features to be obtained.
@@ -340,60 +131,18 @@ message FetchAllByDbIdListRequest {
   optional Slice slice = 3;
 }
 
-message FetchAllByBioTypesRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The biotype of the gene to retrieve.
-  repeated string bio_types = 2;
-}
-
-message FetchAllAltAllelesRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The gene to fetch alternative alleles for
-  Gene gene = 2;
-
-  // Ask the method to warn about any gene without an alt allele group.
-  bool warn_gene_without_alt_allele = 3;
-}
-
 message MultiGeneResponse {
   repeated Gene genes = 1;
 }
 
-message CountResponse {
-  // count of result set
-  int32 count = 1;
-}
-
-message CountAllBySourcesRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The source of the gene to retrieve.
-  repeated string sources = 2;
-}
-
-message CountAllBySliceRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The slice to count genes on.
-  Slice slice = 2;
-
-  // (Optional) the biotype of the features to count.
-  optional string bio_type = 3;
-
-  // (Optional) the source name of the features to count.
-  optional string source = 4;
-}
-
-message CountAllByBioTypesRequest {
+message CountAllGenesByBioTypesRequest {
   RequestMetadata request_metadata = 1;
 
   // The biotype of the gene to retrieve. You can have as an argument a reference to a list of biotypes
   repeated string bio_types = 2;
 }
 
-message FetchByDbIdRequest {
+message FetchGeneByDbIdRequest {
   RequestMetadata request_metadata = 1;
 
   // The unique database identifier for the feature to be obtained

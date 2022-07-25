@@ -4,14 +4,15 @@ import com.google.protobuf.ProtocolStringList;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
 import org.ebi.ensembl.grpc.common.ConnectionParams;
+import org.ebi.ensembl.grpc.common.CountResponse;
 import org.ebi.ensembl.grpc.common.Gene;
-import org.ebi.ensembl.grpc.gene.CountResponse;
 import org.ebi.ensembl.handler.ConnectionHandler;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Objects;
 
+// TODO: Error handling
 @ApplicationScoped
 public class GeneRepo {
   private final ConnectionHandler connectionHandler;
