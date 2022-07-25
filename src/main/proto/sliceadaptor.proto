@@ -7,7 +7,54 @@ option java_package = "org.ebi.ensembl.grpc.slice";
 option java_outer_classname = "SliceAdaptorProto";
 
 service SliceAdaptor {
+  // Retrieves slices of all seq_regions for a given coordinate system.  This is analagous to the methods fetch_all
+  // which were formerly on the ChromosomeAdaptor, RawContigAdaptor and CloneAdaptor classes.  Slices fetched span
+  // the entire seq_regions and are on the forward strand. If the coordinate system with the provided name and version
+  // does not exist an empty list is returned. If the coordinate system name provided is 'toplevel', all non-redundant
+  // toplevel slices are returned (note that any coord_system_version argument is ignored in that case). Retrieved
+  // slices can be broken into smaller slices using the Bio::EnsEMBL::Utils::Slice module.
   rpc FetchAll(FetchAllSliceRequest) returns (FetchAllSliceResponse) {};
+
+  // Retrieves a slice on the requested region.  At a minimum the name the name of the seq_region to fetch must be provided.
+  // If no coordinate system name is provided than a slice on the highest ranked coordinate system with a matching
+  // seq_region_name will be returned.  If a version but no coordinate system name is provided, the same behaviour will
+  // apply, but only coordinate systems of the appropriate version are considered.  The same applies if the 'toplevel'
+  // coordinate system is specified, however in this case the version is ignored.  The coordinate system should always
+  // be specified if it is known, since this is unambiguous and faster. Some fuzzy matching is performed if no exact
+  // match for the provided name is found.  This allows clones to be fetched even when their version is not known.
+  // For example fetch_by_region('clone', 'AC008066') will retrieve the sequence_region with name 'AC008066.4'.
+  // The fuzzy matching can be turned off by setting the $no_fuzz argument to a true value. If the requested seq_region
+  // is not found in the database undef is returned.
+  rpc FetchByRegion(FetchByRegionRequest) returns (Slice) {};
+}
+
+message FetchByRegionRequest {
+  RequestMetadata request_metadata = 1;
+
+  // The name of the coordinate system of the slice to be created
+  // This may be a name of an actual coordinate system or an alias
+  // to a coordinate system.  Valid aliases are 'seqlevel' or
+  // 'toplevel'.
+  string coord_system_name = 2;
+
+  // The name of the sequence region that the slice will be
+  // created on.
+  string seq_region_name = 3;
+
+  // The start of the slice on the sequence region (optional, default = 1)
+  optional int32 start = 4;
+
+  // The end of the slice on the sequence region (optional, default = seq_region length)
+  optional int32 end = 5;
+
+  // The orientation of the slice on the sequence region (optional, default = 1)
+  optional int32 strand = 6;
+
+  // The version of the coordinate system to use (e.g. NCBI33) (optional, default = default version)
+  optional string version = 7;
+
+  // If true (non-zero), do not use "fuzzy matching"
+  optional bool no_fuzz = 8;
 }
 
 message FetchAllSliceRequest {
@@ -15,15 +62,19 @@ message FetchAllSliceRequest {
   // The name of the coordinate system to retrieve slices of. This may be a name of an acutal coordinate system or an
   // alias to a coordinate system.  Valid aliases are 'seqlevel' or 'toplevel'.
   string coord_system_name = 2;
+
   // The version of the coordinate system to retrieve slices of
   optional string coord_system_version = 3;
+
   // If this argument is not provided then only reference slices will be returned. If set, both reference and non
   // reference slices will be returned.
   optional bool include_non_reference = 4;
+
   //  If set duplicate regions will be returned. NOTE: if you do not use this option and you have a
   //  PAR (pseudo-autosomal region) at the beginning of your seq_region then your slice will not start at position 1,
   //  so coordinates retrieved from this slice might not be what you expected.
   optional int32 include_duplicates = 5;
+
   // If set lrg regions will be returned aswell.
   optional bool include_lrg = 6;
 }

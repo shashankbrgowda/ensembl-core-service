@@ -11,9 +11,11 @@ import org.ebi.ensembl.grpc.coord.CoordSystemAdaptor;
 import org.ebi.ensembl.grpc.coord.FetchByNameRequest;
 import org.ebi.ensembl.grpc.slice.FetchAllSliceRequest;
 import org.ebi.ensembl.grpc.slice.FetchAllSliceResponse;
+import org.ebi.ensembl.grpc.slice.FetchByRegionRequest;
 import org.ebi.ensembl.grpc.slice.SliceAdaptor;
 import org.ebi.ensembl.repo.SequenceRegionRepo;
 import org.ebi.ensembl.repo.SpeciesRepo;
+import org.ebi.ensembl.util.MutinyUtil;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -69,6 +71,11 @@ public class SliceAdaptorImpl implements SliceAdaptor {
                     fetchByNameRequest));
   }
 
+  @Override
+  public Uni<Slice> fetchByRegion(FetchByRegionRequest request) {
+    return null;
+  }
+
   private Uni<FetchAllSliceResponse> mergeAndFilterLrgNonRefSlices(
       Integer speciesId,
       ConnectionParams connectionParams,
@@ -102,12 +109,9 @@ public class SliceAdaptorImpl implements SliceAdaptor {
                                 sequenceRegionRepo.genericFetch(
                                     connectionParams, String.format(sqlStr, coordSystem.getDbId()));
                           }
-                          return sliceMulti
-                              .select()
-                              .where(
-                                  slice -> !lrgNonRefSlicesMap.containsKey(slice.getSeqRegionId()))
-                              .collect()
-                              .asList();
+                          return MutinyUtil.filterAndCollectMultiAsList(
+                              sliceMulti,
+                              slice -> !lrgNonRefSlicesMap.containsKey(slice.getSeqRegionId()));
                         })
                     .onItem()
                     .transformToUni(sliceResponseFunc));
@@ -131,13 +135,7 @@ public class SliceAdaptorImpl implements SliceAdaptor {
           sequenceRegionRepo.genericFetch(
               connectionParams, String.format(sql.get(), "LRG", speciesId));
     }
-    return Multi.createBy()
-        .combining()
-        .streams(sliceMulti1, sliceMulti2)
-        .asTuple()
-        .onItem()
-        .transformToMultiAndMerge(
-            tuple2 -> Multi.createFrom().items(tuple2.getItem1(), tuple2.getItem2()));
+    return MutinyUtil.combineMultiAndMerge(sliceMulti1, sliceMulti2);
   }
 
   private Uni<Map<Integer, Slice>> slicesAsMap(Multi<Slice> lrgNonRefSlices) {
