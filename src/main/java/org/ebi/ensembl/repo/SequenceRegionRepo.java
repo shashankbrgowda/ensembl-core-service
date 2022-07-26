@@ -51,10 +51,10 @@ public class SequenceRegionRepo {
     return connectionHandler
         .pool(connectionParams)
         .query(
-            String.format(
-                "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, cs.name as cs_name, "
-                    + "cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs WHERE sr.coord_system_id = cs.coord_system_id "
-                    + "AND sr.seq_region_id = %d",
+            String.format("""
+                    SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, cs.name as cs_name,
+                    cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs WHERE sr.coord_system_id = cs.coord_system_id
+                    AND sr.seq_region_id = %d""",
                 seqRegionId))
         .execute()
         .onItem()

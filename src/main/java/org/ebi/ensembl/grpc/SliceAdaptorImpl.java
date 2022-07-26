@@ -30,6 +30,7 @@ public class SliceAdaptorImpl implements SliceAdaptor {
   @Inject SpeciesRepo speciesRepo;
 
   // TODO: assembly exception table..
+  // TODO: Move SQL to repo layer..
   @Override
   public Uni<FetchAllSliceResponse> fetchAll(FetchAllSliceRequest request) {
     RequestMetadata requestMetadata = request.getRequestMetadata();
@@ -40,11 +41,11 @@ public class SliceAdaptorImpl implements SliceAdaptor {
             .setVersion(request.getCoordSystemVersion())
             .build();
     AtomicReference<String> sql =
-        new AtomicReference<>(
-            "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, "
-                + "cs.name cs_name, cs.rank, cs.version, cs.attrib FROM seq_region sr, seq_region_attrib sra, "
-                + "attrib_type at, coord_system cs WHERE at.code = '%s' AND sra.seq_region_id = sr.seq_region_id AND "
-                + "at.attrib_type_id = sra.attrib_type_id AND sr.coord_system_id = cs.coord_system_id AND cs.species_id = %d");
+        new AtomicReference<>("""
+                SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, cs.name as cs_name, cs.rank, 
+                cs.version, cs.attrib FROM seq_region sr, seq_region_attrib sra, attrib_type at, coord_system cs 
+                WHERE at.code = '%s' AND sra.seq_region_id = sr.seq_region_id AND at.attrib_type_id = sra.attrib_type_id 
+                AND sr.coord_system_id = cs.coord_system_id AND cs.species_id = %d""");
 
     return speciesRepo
         .fetchSpeciesId(
@@ -181,10 +182,10 @@ public class SliceAdaptorImpl implements SliceAdaptor {
                                     connectionParams,
                                     String.format(sql.get(), "toplevel", speciesId));
                           } else {
-                            String sqlStr =
-                                "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, "
-                                    + "cs.name as cs_name, cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs "
-                                    + "WHERE sr.coord_system_id = cs.coord_system_id AND sr.coord_system_id = %d";
+                            String sqlStr = """
+                                    SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id,
+                                    cs.name as cs_name, cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs
+                                    WHERE sr.coord_system_id = cs.coord_system_id AND sr.coord_system_id = %d""";
                             sliceMulti =
                                 sequenceRegionRepo.genericFetch(
                                     connectionParams, String.format(sqlStr, coordSystem.getDbId()));
