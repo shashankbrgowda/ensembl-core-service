@@ -47,6 +47,22 @@ public class SequenceRegionRepo {
         .transform(itr -> itr.hasNext() ? mapSeqRegion(itr.next()) : null);
   }
 
+  public Uni<Slice> fetchBySeqRegionId(ConnectionParams connectionParams, Integer seqRegionId) {
+    return connectionHandler
+        .pool(connectionParams)
+        .query(
+            String.format(
+                "SELECT sr.seq_region_id, sr.name as sr_name, sr.length, sr.coord_system_id, cs.name as cs_name, "
+                    + "cs.rank, cs.version, cs.attrib FROM seq_region sr, coord_system cs WHERE sr.coord_system_id = cs.coord_system_id "
+                    + "AND sr.seq_region_id = %d",
+                seqRegionId))
+        .execute()
+        .onItem()
+        .transform(RowSet::iterator)
+        .onItem()
+        .transform(itr -> itr.hasNext() ? mapSlice(itr.next()) : null);
+  }
+
   private Slice mapSeqRegion(Row r) {
     Slice.Builder sliceBuilder = Slice.newBuilder();
 

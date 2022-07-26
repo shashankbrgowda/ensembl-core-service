@@ -116,9 +116,6 @@ message FetchAllGenesByStableIdListRequest {
 
   // Stable ID list
   repeated string stable_ids = 2;
-
-  // The slice from which to obtain features
-  Slice slice = 3;
 }
 
 message FetchAllGenesByDbIdListRequest {
@@ -126,9 +123,6 @@ message FetchAllGenesByDbIdListRequest {
 
   // The unique database identifiers for the features to be obtained.
   repeated int32 db_ids = 2;
-
-  // (Optional) Slice to map features onto.
-  optional Slice slice = 3;
 }
 
 message MultiGeneResponse {

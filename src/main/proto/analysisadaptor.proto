@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.analysis";
+option java_outer_classname = "AnalysisAdaptorProto";
+
+service AnalysisAdaptor {
+  rpc FetchByDbId(FetchAnalysisByDbIdRequest) returns (Analysis);
+}
+
+message FetchAnalysisByDbIdRequest {
+  RequestMetadata request_metadata = 1;
+  // the database id of the analysis record to retrieve
+  int32 analysis_id = 2;
+}

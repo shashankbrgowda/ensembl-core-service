@@ -134,6 +134,28 @@ public class SliceAdaptorImpl implements SliceAdaptor {
     return fetchByRegion(fetchBySliceRegionRequest);
   }
 
+  @Override
+  public Uni<Slice> fetchBySeqRegionId(FetchBySeqRegionIdRequest request) {
+    return sequenceRegionRepo
+        .fetchBySeqRegionId(
+            request.getRequestMetadata().getConnectionParams(), request.getSeqRegionId())
+        .onItem()
+        .transform(
+            slice -> {
+              Slice.Builder builder = slice.toBuilder();
+              if (request.getStart() != 0) {
+                builder.setStart(request.getStart());
+              }
+              if (request.getEnd() != 0) {
+                builder.setEnd(request.getEnd());
+              }
+              if (request.getStrand() != 0) {
+                builder.setStrand(request.getStrand());
+              }
+              return builder.build();
+            });
+  }
+
   private Uni<FetchAllSliceResponse> mergeAndFilterLrgNonRefSlices(
       Integer speciesId,
       ConnectionParams connectionParams,

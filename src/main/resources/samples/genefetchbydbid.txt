@@ -1,0 +1,80 @@
+
+CONSTRAINT: g.gene_id = ? 
+
+ SELECT  g.gene_id, g.seq_region_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, g.analysis_id, g.biotype, g.display_xref_id, g.description, g.source, g.is_current, g.canonical_transcript_id, g.stable_id, g.version, UNIX_TIMESTAMP(g.created_date), UNIX_TIMESTAMP(g.modified_date), x.display_label, x.dbprimary_acc, x.description, x.version, exdb.db_name, exdb.status, exdb.db_release, exdb.db_display_name, x.info_type, x.info_text 
+FROM (( (gene g) 
+  LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
+  LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id ) 
+ WHERE g.gene_id = ? 
+ ORDER BY g.gene_id 
+
+ Feature/Gene :$VAR1 = bless( {
+                 'slice' => bless( {
+                                     'strand' => 1,
+                                     'seq_region_name' => 'CHR_HG1815_PATCH',
+                                     'start' => 1,
+                                     'end' => 133281281,
+                                     'coord_system' => bless( {
+                                                                'version' => 'GRCh38',
+                                                                'top_level' => 0,
+                                                                'alias_to' => undef,
+                                                                'name' => 'chromosome',
+                                                                'rank' => 1,
+                                                                'default' => 1,
+                                                                'dbID' => 4,
+                                                                'sequence_level' => 0
+                                                              }, 'Bio::EnsEMBL::CoordSystem' ),
+                                     'seq_region_length' => 133281281,
+                                   }, 'Bio::EnsEMBL::Slice' ),
+                 'analysis' => bless( {
+                                        '_db' => undef,
+                                        'dbID' => 8455,
+                                        '_program_version' => undef,
+                                        '_db_version' => undef,
+                                        '_created' => '2014-05-23 13:41:28',
+                                        '_logic_name' => 'proj_havana_homo_sapiens',
+                                        '_display_label' => 'Projected Havana',
+                                        '_displayable' => 1,
+                                        '_module_version' => undef,
+                                        '_program_file' => undef,
+                                        '_program' => undef,
+                                        '_description' => 'Manual annotation (determined on a case-by-case basis) from the Havana project, projected to the <a rel="external" href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/info/definitions.shtml">alternate locus</a> via a mapping from the <a rel="external" href="http://www.ncbi.nlm.nih.gov/projects/genome/assembly/grc/info/definitions.shtml">primary assembly</a>.',
+                                        '_gff_feature' => undef,
+                                        '_parameters' => undef,
+                                        '_gff_source' => undef,
+                                        '_module' => undef,
+                                        '_web_data' => '{"caption" => "Genes (Comprehensive set from GENCODE 32)","colour_key" => "[biotype]","default" => {"MultiBottom" => "collapsed_label","MultiTop" => "gene_label","alignsliceviewbottom" => "as_collapsed_label","contigviewbottom" => "transcript_label","contigviewtop" => "gene_label","cytoview" => "gene_label"},"key" => "ensembl","label_key" => "[biotype]","multi_name" => "GENCODE 32 Comprehensive gene set","name" => "Comprehensive Gene Annotations from GENCODE 32"}',
+                                        '_db_file' => undef
+                                      }, 'Bio::EnsEMBL::Analysis' ),
+                 'is_current' => 1,
+                 'created_date' => 1573827942,
+                 'external_db' => 'Vega_gene',
+                 'modified_date' => 1573827942,
+                 'external_name' => undef,
+                 'version' => 1,
+                 'display_xref' => bless( {
+                                            'dbname' => 'Vega_gene',
+                                            'display_id' => 'RP11-885B4.1',
+                                            'info_text' => '',
+                                            'version' => '1',
+                                            'primary_id' => 'OTTHUMG00000168140',
+                                            'description' => undef,
+                                            'dbID' => 1227737,
+                                            'status' => 'KNOWNXREF',
+                                            'db_display_name' => 'Vega gene',
+                                            'release' => '1',
+                                            'info_type' => 'NONE'
+                                          }, 'Bio::EnsEMBL::DBEntry' ),
+                 'canonical_transcript_id' => 0,
+                 'external_status' => 'KNOWNXREF',
+                 'biotype' => 'processed_transcript',
+                 'start' => 2701737,
+                 'strand' => -1,
+                 'source' => 'havana',
+                 'dbID' => 548291,
+                 'description' => 'novel transcript',
+                 'stable_id' => 'ENSG00000285134',
+                 'end' => 2812902
+               }, 'Bio::EnsEMBL::Gene' );
+
+

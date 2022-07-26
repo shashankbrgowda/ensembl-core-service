@@ -31,16 +31,8 @@ message RequestMetadata {
   ConnectionParams connection_params = 2;
 }
 
-message Feature {
-  int32 start = 1;
-  int32 end = 2;
-  int32 strand = 3;
-  Slice slice = 4;
-  Analysis analysis = 5;
-}
-
 message Analysis {
-  int32 id = 1;
+  int32 analysis_id = 1;
   string logic_name = 2;
   string db = 3;
   string db_version = 4;
@@ -56,7 +48,7 @@ message Analysis {
   string created = 14;
   string description = 15;
   string display_label = 16;
-  string displayable = 17;
+  int32 displayable = 17;
   string web_data = 18;
 }
 
@@ -99,12 +91,12 @@ message Gene {
   // The stable identifier of this gene
   string stable_id = 2;
   // the version of the stable identifier of this gene
-  int32 stable_id_version = 3;
+  int32 version = 3;
   int32 seq_region_id = 4;
   // Start position of the gene
-  int32 start_pos = 5;
+  int32 start = 5;
   // end position of the gene
-  int32 end_pos = 6;
+  int32 end = 6;
   // The strand the gene is on
   int32 strand = 7;
   // the biotype e.g. "protein_coding"
@@ -117,18 +109,29 @@ message Gene {
   // specifies if this is the current version of the gene
   bool is_current = 12;
   int32 display_xref_id = 13;
-  // the external database name associated with this gene
-  string external_name = 14;
-  // the name of the database the external name is from
-  string external_db = 15;
-  // the status of the external identifier
-  string external_status = 16;
   // the canonical transcript dbID of this gene, if the transcript object itself is not available.
   int32 canonical_transcript_id = 17;
   // the date the gene was created
   string created_date = 18;
   // the date the gene was last modified
   string modified_date = 19;
+  Slice slice = 20;
+  Analysis analysis = 21;
+  DBEntry display_xref = 22;
+}
+
+message DBEntry {
+  int32 db_id = 1;
+  string display_id = 2;
+  string primary_id = 3;
+  int32 version = 4;
+  string description = 5;
+  string release = 6;
+  string dbname = 7;
+  string status = 8;
+  string db_display_name = 9;
+  string info_type = 10;
+  string info_text = 11;
 }
 
 message CountResponse {

@@ -32,6 +32,19 @@ service SliceAdaptor {
   // Slice::name allows you to serialise/marshall a slice and this method allows you to deserialise/unmarshal it.
   // Returns undef if no seq_region with the provided name exists in the database.
   rpc FetchByName(FetchBySliceNameRequest) returns (Slice) {};
+
+  // Creates a slice object of an entire seq_region using the seq_region internal identifier to resolve the seq_region.
+  // Returns undef if no such slice exists.
+  rpc FetchBySeqRegionId(FetchBySeqRegionIdRequest) returns (Slice) {};
+}
+
+message FetchBySeqRegionIdRequest {
+  RequestMetadata request_metadata = 1;
+  //The internal identifier of the seq_region to create this slice on
+  int32 seq_region_id = 2;
+  optional int32 start = 3;
+  optional int32 end = 4;
+  optional int32 strand = 5;
 }
 
 message FetchBySliceNameRequest {
