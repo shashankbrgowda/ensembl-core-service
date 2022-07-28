@@ -12,6 +12,8 @@ import org.ebi.ensembl.handler.ConnectionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
+import static org.ebi.ensembl.util.DbUtil.*;
+
 // TODO: Error handling
 @ApplicationScoped
 public class CoordSystemRepo {
@@ -65,22 +67,11 @@ public class CoordSystemRepo {
       }
     }
 
-    if (Objects.nonNull(r.getInteger("coord_system_id"))) {
-      coordSysBuilder.setDbId(r.getInteger("coord_system_id"));
-    }
-
-    if (Objects.nonNull(r.getString("name"))) {
-      coordSysBuilder.setName(r.getString("name"));
-    }
-
-    if (Objects.nonNull(r.getInteger("rank"))) {
-      coordSysBuilder.setRank(r.getInteger("rank"));
-    }
-
-    if (Objects.nonNull(r.getString("version"))) {
-      coordSysBuilder.setVersion(r.getString("version"));
-    }
-
-    return coordSysBuilder.build();
+    return coordSysBuilder
+        .setDbId(protoDefaultValue(r.getInteger("coord_system_id"), iCls))
+        .setName(protoDefaultValue(r.getString("name"), sCls))
+        .setRank(protoDefaultValue(r.getInteger("rank"), iCls))
+        .setVersion(protoDefaultValue(r.getString("version"), sCls))
+        .build();
   }
 }

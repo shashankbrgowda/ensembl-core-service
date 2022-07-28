@@ -12,6 +12,8 @@ import org.ebi.ensembl.handler.ConnectionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
+import static org.ebi.ensembl.util.DbUtil.*;
+
 // TODO: Error handling
 @ApplicationScoped
 public class SequenceRegionRepo {
@@ -64,43 +66,30 @@ public class SequenceRegionRepo {
   }
 
   private Slice mapSeqRegion(Row r) {
-    Slice.Builder sliceBuilder = Slice.newBuilder();
-
     if (Objects.isNull(r)) {
       return null;
     }
 
-    if (Objects.nonNull(r.getInteger("seq_region_id"))) {
-      sliceBuilder.setSeqRegionId(r.getInteger("seq_region_id"));
-    }
-
-    if (Objects.nonNull(r.getString("name"))) {
-      sliceBuilder.setSeqRegionName(r.getString("name"));
-    }
-
-    Integer sliceLen = r.getInteger("length");
-    if (Objects.nonNull(sliceLen)) {
-      sliceBuilder.setSeqRegionLength(sliceLen);
-    }
-
+    Integer len = protoDefaultValue(r.getInteger("length"), iCls);
     // TODO: check is this is correct because for one of slice start is not 1
     // and end is not related to length ( ex seq_region_id: 131553, length: 57227415)
-    sliceBuilder.setStart(1);
-    sliceBuilder.setEnd(sliceLen);
-    sliceBuilder.setStrand(1);
-
-    return sliceBuilder.build();
+    return Slice.newBuilder()
+            .setSeqRegionId(protoDefaultValue(r.getInteger("seq_region_id"), iCls))
+            .setSeqRegionName(protoDefaultValue(r.getString("name"), sCls))
+            .setSeqRegionLength(len)
+            .setEnd(len)
+            .setStart(1)
+            .setStrand(1)
+            .build();
   }
 
   // TODO: Remove coord system here, Should be just sequence region related info
   private Slice mapSlice(Row r) {
-    Slice.Builder sliceBuilder = Slice.newBuilder();
-    CoordSystem.Builder coordSysBuilder = CoordSystem.newBuilder();
-
     if (Objects.isNull(r)) {
       return null;
     }
 
+    CoordSystem.Builder coordSysBuilder = CoordSystem.newBuilder();
     if (Objects.nonNull(r.getString("attrib"))) {
       String[] attribs = r.getString("attrib").split(",");
       for (String attrib : attribs) {
@@ -113,42 +102,21 @@ public class SequenceRegionRepo {
       }
     }
 
-    if (Objects.nonNull(r.getInteger("coord_system_id"))) {
-      coordSysBuilder.setDbId(r.getInteger("coord_system_id"));
-    }
+    CoordSystem coordSystem = coordSysBuilder
+            .setDbId(protoDefaultValue(r.getInteger("coord_system_id"), iCls))
+            .setName(protoDefaultValue(r.getString("cs_name"), sCls))
+            .setRank(protoDefaultValue(r.getInteger("rank"), iCls))
+            .setVersion(protoDefaultValue(r.getString("version"), sCls))
+            .build();
 
-    if (Objects.nonNull(r.getString("cs_name"))) {
-      coordSysBuilder.setName(r.getString("cs_name"));
-    }
-
-    if (Objects.nonNull(r.getInteger("rank"))) {
-      coordSysBuilder.setRank(r.getInteger("rank"));
-    }
-
-    if (Objects.nonNull(r.getString("version"))) {
-      coordSysBuilder.setVersion(r.getString("version"));
-    }
-
-    if (Objects.nonNull(r.getInteger("seq_region_id"))) {
-      sliceBuilder.setSeqRegionId(r.getInteger("seq_region_id"));
-    }
-
-    if (Objects.nonNull(r.getString("sr_name"))) {
-      sliceBuilder.setSeqRegionName(r.getString("sr_name"));
-    }
-
-    Integer sliceLen = r.getInteger("length");
-    if (Objects.nonNull(sliceLen)) {
-      sliceBuilder.setSeqRegionLength(sliceLen);
-    }
-
-    // TODO: check is this is correct because for one of slice start is not 1
-    // and end is not related to length ( ex seq_region_id: 131553, length: 57227415)
-    sliceBuilder.setStart(1);
-    sliceBuilder.setEnd(sliceLen);
-    sliceBuilder.setStrand(1);
-    sliceBuilder.setCoordSystem(coordSysBuilder.build());
-
-    return sliceBuilder.build();
+    Integer len = protoDefaultValue(r.getInteger("length"), iCls);
+    return Slice.newBuilder()
+            .setSeqRegionId(protoDefaultValue(r.getInteger("seq_region_id"), iCls))
+            .setSeqRegionName(protoDefaultValue(r.getString("sr_name"), sCls))
+            .setSeqRegionLength(len)
+            .setEnd(len)
+            .setStart(1)
+            .setStrand(1)
+            .setCoordSystem(coordSystem).build();
   }
 }

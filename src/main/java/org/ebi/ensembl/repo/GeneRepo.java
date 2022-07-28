@@ -14,6 +14,8 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static org.ebi.ensembl.util.DbUtil.*;
+
 // TODO: Error handling
 @ApplicationScoped
 public class GeneRepo {
@@ -60,17 +62,13 @@ public class GeneRepo {
   }
 
   private CountResponse countDto(Row row) {
-    CountResponse.Builder builder = CountResponse.newBuilder();
-
     if (Objects.isNull(row)) {
       return null;
     }
 
-    if (Objects.nonNull(row.getInteger("total"))) {
-      builder.setCount(row.getInteger("total"));
-    }
-
-    return builder.build();
+    return CountResponse.newBuilder()
+            .setCount(protoDefaultValue(row.getInteger("total"), iCls))
+            .build();
   }
 
   private Gene geneDto(Row r) {
@@ -80,125 +78,44 @@ public class GeneRepo {
       return null;
     }
 
-    if (Objects.nonNull(r.getInteger("gene_id"))) {
-      geneBuilder.setDbId(r.getInteger("gene_id"));
-    }
-
-    if (Objects.nonNull(r.getInteger("seq_region_id"))) {
-      geneBuilder.setSeqRegionId(r.getInteger("seq_region_id"));
-    }
-
-    if (Objects.nonNull(r.getInteger("seq_region_start"))) {
-      geneBuilder.setStart(r.getInteger("seq_region_start"));
-    }
-
-    if (Objects.nonNull(r.getInteger("seq_region_end"))) {
-      geneBuilder.setEnd(r.getInteger("seq_region_end"));
-    }
-
-    if (Objects.nonNull(r.getInteger("seq_region_strand"))) {
-      geneBuilder.setStrand(r.getInteger("seq_region_strand"));
-    }
-
-    if (Objects.nonNull(r.getInteger("analysis_id"))) {
-      geneBuilder.setAnalysisId(r.getInteger("analysis_id"));
-    }
-
-    if (Objects.nonNull(r.getString("biotype"))) {
-      geneBuilder.setStableId(r.getString("biotype"));
-    }
-
-    if (Objects.nonNull(r.getInteger("display_xref_id"))) {
-      geneBuilder.setDisplayXrefId(r.getInteger("display_xref_id"));
-    }
-
-    if (Objects.nonNull(r.getString("source"))) {
-      geneBuilder.setSource(r.getString("source"));
-    }
-
-    if (Objects.nonNull(r.getString("description"))) {
-      geneBuilder.setDescription(r.getString("description"));
-    }
-
-    if (Objects.nonNull(r.getBoolean("is_current"))) {
-      geneBuilder.setIsCurrent(r.getBoolean("is_current"));
-    }
-
-    if (Objects.nonNull(r.getInteger("canonical_transcript_id"))) {
-      geneBuilder.setCanonicalTranscriptId(r.getInteger("canonical_transcript_id"));
-    }
-
-    if (Objects.nonNull(r.getString("stable_id"))) {
-      geneBuilder.setStableId(r.getString("stable_id"));
-    }
-
-    if (Objects.nonNull(r.getInteger("version"))) {
-      geneBuilder.setVersion(r.getInteger("version"));
-    }
-
-    if (Objects.nonNull(r.getLocalDateTime("created_date"))) {
-      geneBuilder.setCreatedDate(r.getLocalDateTime("created_date").toString());
-    }
-
-    if (Objects.nonNull(r.getLocalDateTime("modified_date"))) {
-      geneBuilder.setModifiedDate(r.getLocalDateTime("modified_date").toString());
-    }
-
     String xrefDisplayLabel = r.getString("display_label");
     if (StringUtils.isNotEmpty(xrefDisplayLabel)) {
       geneBuilder.setDisplayXref(mapDBEntry(r));
     }
 
-    return geneBuilder.build();
+    return geneBuilder
+            .setDbId(protoDefaultValue(r.getInteger("gene_id"), iCls))
+            .setSeqRegionId(protoDefaultValue(r.getInteger("seq_region_id"), iCls))
+            .setStart(protoDefaultValue(r.getInteger("seq_region_start"), iCls))
+            .setEnd(protoDefaultValue(r.getInteger("seq_region_end"), iCls))
+            .setStrand(protoDefaultValue(r.getInteger("seq_region_strand"), iCls))
+            .setAnalysisId(protoDefaultValue(r.getInteger("analysis_id"), iCls))
+            .setStableId(protoDefaultValue(r.getString("biotype"), sCls))
+            .setDisplayXrefId(protoDefaultValue(r.getInteger("display_xref_id"), iCls))
+            .setSource(protoDefaultValue(r.getString("source"), sCls))
+            .setDescription(protoDefaultValue(r.getString("description"), sCls))
+            .setIsCurrent(protoDefaultValue(r.getBoolean("is_current"), bCls))
+            .setCanonicalTranscriptId(protoDefaultValue(r.getInteger("canonical_transcript_id"), iCls))
+            .setStableId(protoDefaultValue(r.getString("stable_id"), sCls))
+            .setVersion(protoDefaultValue(r.getInteger("version"), iCls))
+            .setCreatedDate(protoDefaultValue(r.getLocalDateTime("created_date"), ldtCls).toString())
+            .setModifiedDate(protoDefaultValue(r.getLocalDateTime("modified_date"), ldtCls).toString())
+            .build();
   }
 
   private DBEntry mapDBEntry(Row r) {
-    DBEntry.Builder dbEntryBuilder = DBEntry.newBuilder();
-
-    if (Objects.nonNull(r.getInteger("display_xref_id"))) {
-      dbEntryBuilder.setDbId(r.getInteger("display_xref_id"));
-    }
-
-    if (Objects.nonNull(r.getString("display_label"))) {
-      dbEntryBuilder.setDisplayId(r.getString("display_label"));
-    }
-
-    if (Objects.nonNull(r.getString("dbprimary_acc"))) {
-      dbEntryBuilder.setPrimaryId(r.getString("dbprimary_acc"));
-    }
-
-    if (Objects.nonNull(r.getString("description"))) {
-      dbEntryBuilder.setDescription(r.getString("description"));
-    }
-
-    if (Objects.nonNull(r.getInteger("version"))) {
-      dbEntryBuilder.setVersion(r.getInteger("version"));
-    }
-
-    if (Objects.nonNull(r.getString("db_name"))) {
-      dbEntryBuilder.setDbname(r.getString("db_name"));
-    }
-
-    if (Objects.nonNull(r.getString("db_release"))) {
-      dbEntryBuilder.setRelease(r.getString("db_release"));
-    }
-
-    if (Objects.nonNull(r.getString("db_display_name"))) {
-      dbEntryBuilder.setDbDisplayName(r.getString("db_display_name"));
-    }
-
-    if (Objects.nonNull(r.getString("info_type"))) {
-      dbEntryBuilder.setInfoType(r.getString("info_type"));
-    }
-
-    if (Objects.nonNull(r.getString("info_text"))) {
-      dbEntryBuilder.setInfoText(r.getString("info_text"));
-    }
-
-    if (Objects.nonNull(r.getString("status"))) {
-      dbEntryBuilder.setStatus(r.getString("status"));
-    }
-
-    return dbEntryBuilder.build();
+    return DBEntry.newBuilder()
+            .setDbId(protoDefaultValue(r.getInteger("display_xref_id"), iCls))
+            .setDisplayId(protoDefaultValue(r.getString("display_label"), sCls))
+            .setPrimaryId(protoDefaultValue(r.getString("dbprimary_acc"), sCls))
+            .setDescription(protoDefaultValue(r.getString("description"), sCls))
+            .setVersion(protoDefaultValue(r.getInteger("version"), iCls))
+            .setDbname(protoDefaultValue(r.getString("db_name"), sCls))
+            .setRelease(protoDefaultValue(r.getString("db_release"), sCls))
+            .setDbDisplayName(protoDefaultValue(r.getString("db_display_name"), sCls))
+            .setInfoType(protoDefaultValue(r.getString("info_type"), sCls))
+            .setInfoText(protoDefaultValue(r.getString("info_text"), sCls))
+            .setStatus(protoDefaultValue(r.getString("status"), sCls))
+            .build();
   }
 }

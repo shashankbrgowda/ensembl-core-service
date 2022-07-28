@@ -11,6 +11,8 @@ import org.ebi.ensembl.handler.ConnectionHandler;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
+import static org.ebi.ensembl.util.DbUtil.*;
+
 @ApplicationScoped
 public class AnalysisRepo {
   private final ConnectionHandler connectionHandler;
@@ -39,84 +41,28 @@ public class AnalysisRepo {
   }
 
   private Analysis mapAnalysis(Row r) {
-    Analysis.Builder analysisBuilder = Analysis.newBuilder();
-
     if (Objects.isNull(r)) {
       return null;
     }
 
-    if (Objects.nonNull(r.getInteger("analysis_id"))) {
-      analysisBuilder.setAnalysisId(r.getInteger("analysis_id"));
-    }
-
-    if (Objects.nonNull(r.getString("logic_name"))) {
-      analysisBuilder.setLogicName(r.getString("logic_name"));
-    }
-
-    if (Objects.nonNull(r.getString("program"))) {
-      analysisBuilder.setProgram(r.getString("program"));
-    }
-
-    if (Objects.nonNull(r.getString("program_version"))) {
-      analysisBuilder.setProgramVersion(r.getString("program_version"));
-    }
-
-    if (Objects.nonNull(r.getString("program_file"))) {
-      analysisBuilder.setProgramFile(r.getString("program_file"));
-    }
-
-    if (Objects.nonNull(r.getString("db"))) {
-      analysisBuilder.setDb(r.getString("db"));
-    }
-
-    if (Objects.nonNull(r.getString("db_version"))) {
-      analysisBuilder.setDbVersion(r.getString("db_version"));
-    }
-
-    if (Objects.nonNull(r.getString("db_file"))) {
-      analysisBuilder.setDbFile(r.getString("db_file"));
-    }
-
-    if (Objects.nonNull(r.getString("module"))) {
-      analysisBuilder.setModule(r.getString("module"));
-    }
-
-    if (Objects.nonNull(r.getString("module_version"))) {
-      analysisBuilder.setModuleVersion(r.getString("module_version"));
-    }
-
-    if (Objects.nonNull(r.getString("gff_source"))) {
-      analysisBuilder.setGffSource(r.getString("gff_source"));
-    }
-
-    if (Objects.nonNull(r.getString("gff_feature"))) {
-      analysisBuilder.setGffFeature(r.getString("gff_feature"));
-    }
-
-    if (Objects.nonNull(r.getLocalDateTime("created"))) {
-      analysisBuilder.setCreated(r.getLocalDateTime("created").toString());
-    }
-
-    if (Objects.nonNull(r.getString("parameters"))) {
-      analysisBuilder.setParameters(r.getString("parameters"));
-    }
-
-    if (Objects.nonNull(r.getString("description"))) {
-      analysisBuilder.setDescription(r.getString("description"));
-    }
-
-    if (Objects.nonNull(r.getString("display_label"))) {
-      analysisBuilder.setDisplayLabel(r.getString("display_label"));
-    }
-
-    if (Objects.nonNull(r.getInteger("displayable"))) {
-      analysisBuilder.setDisplayable(r.getInteger("displayable"));
-    }
-
-    if (Objects.nonNull(r.getString("web_data"))) {
-      analysisBuilder.setWebData(r.getString("web_data"));
-    }
-
-    return analysisBuilder.build();
+    return Analysis.newBuilder()
+            .setAnalysisId(protoDefaultValue(r.getInteger("analysis_id"), iCls))
+            .setLogicName(protoDefaultValue(r.getString("logic_name"), sCls))
+            .setProgram(protoDefaultValue(r.getString("program"), sCls))
+            .setProgramVersion(protoDefaultValue(r.getString("program_version"), sCls))
+            .setProgramFile(protoDefaultValue(r.getString("program_file"), sCls))
+            .setDb(protoDefaultValue(r.getString("db"), sCls))
+            .setDbVersion(protoDefaultValue(r.getString("db_version"), sCls))
+            .setDbFile(protoDefaultValue(r.getString("db_file"), sCls))
+            .setModule(protoDefaultValue(r.getString("module"), sCls))
+            .setModuleVersion(protoDefaultValue(r.getString("module_version"), sCls))
+            .setGffSource(protoDefaultValue(r.getString("gff_source"), sCls))
+            .setGffFeature(protoDefaultValue(r.getString("gff_feature"), sCls))
+            .setCreated(protoDefaultValue(r.getLocalDateTime("created"), ldtCls).toString())
+            .setParameters(protoDefaultValue(r.getString("parameters"), sCls))
+            .setDescription(protoDefaultValue(r.getString("description"), sCls))
+            .setDisplayLabel(protoDefaultValue(r.getString("display_label"), sCls))
+            .setDisplayable(protoDefaultValue(r.getInteger("displayable"), iCls))
+            .setWebData(protoDefaultValue(r.getString("web_data"), sCls)).build();
   }
 }

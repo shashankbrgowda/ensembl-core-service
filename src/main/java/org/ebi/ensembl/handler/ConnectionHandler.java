@@ -5,7 +5,7 @@ import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.sqlclient.PoolOptions;
 import org.ebi.ensembl.grpc.common.ConnectionParams;
-import org.ebi.ensembl.util.DbConnectionUtil;
+import org.ebi.ensembl.util.DbUtil;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class ConnectionHandler {
   }
 
   public Pool pool(ConnectionParams params) {
-    String key = DbConnectionUtil.key(params);
+    String key = DbUtil.key(params);
     if (multiPool.containsKey(key)) {
       return multiPool.get(key);
     }

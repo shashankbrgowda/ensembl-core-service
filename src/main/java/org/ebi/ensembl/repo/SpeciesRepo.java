@@ -7,7 +7,8 @@ import org.ebi.ensembl.grpc.common.ConnectionParams;
 import org.ebi.ensembl.handler.ConnectionHandler;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Objects;
+
+import static org.ebi.ensembl.util.DbUtil.protoDefaultValue;
 
 // TODO: Error handling
 @ApplicationScoped
@@ -33,9 +34,7 @@ public class SpeciesRepo {
             itr -> {
               if (itr.hasNext()) {
                 Row row = itr.next();
-                if (Objects.nonNull(row)) {
-                  return row.getInteger("species_id");
-                }
+                return protoDefaultValue(row.getInteger("species_id"), Integer.class);
               }
               return null;
             });
