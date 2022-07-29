@@ -42,7 +42,7 @@ public class AnalysisRepo {
 
   private Analysis mapAnalysis(Row r) {
     if (Objects.isNull(r)) {
-      return null;
+      return Analysis.newBuilder().build();
     }
 
     return Analysis.newBuilder()

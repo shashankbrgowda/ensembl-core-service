@@ -52,7 +52,7 @@ public class CoordSystemRepo {
     CoordSystem.Builder coordSysBuilder = CoordSystem.newBuilder();
 
     if (Objects.isNull(r)) {
-      return null;
+      return CoordSystem.newBuilder().build();
     }
 
     if (Objects.nonNull(r.getString("attrib"))) {

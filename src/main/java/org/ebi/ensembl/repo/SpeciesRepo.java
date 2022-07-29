@@ -36,7 +36,8 @@ public class SpeciesRepo {
                 Row row = itr.next();
                 return protoDefaultValue(row.getInteger("species_id"), Integer.class);
               }
-              return null;
+              // filter at method call
+              return -1;
             });
   }
 }

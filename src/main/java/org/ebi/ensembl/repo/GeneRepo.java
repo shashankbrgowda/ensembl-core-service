@@ -63,7 +63,7 @@ public class GeneRepo {
 
   private CountResponse countDto(Row row) {
     if (Objects.isNull(row)) {
-      return null;
+      return CountResponse.newBuilder().build();
     }
 
     return CountResponse.newBuilder()
@@ -75,7 +75,7 @@ public class GeneRepo {
     Gene.Builder geneBuilder = Gene.newBuilder();
 
     if (Objects.isNull(r)) {
-      return null;
+      return Gene.newBuilder().build();
     }
 
     String xrefDisplayLabel = r.getString("display_label");

@@ -67,7 +67,7 @@ public class SequenceRegionRepo {
 
   private Slice mapSeqRegion(Row r) {
     if (Objects.isNull(r)) {
-      return null;
+      return Slice.newBuilder().build();
     }
 
     Integer len = protoDefaultValue(r.getInteger("length"), iCls);
@@ -86,7 +86,7 @@ public class SequenceRegionRepo {
   // TODO: Remove coord system here, Should be just sequence region related info
   private Slice mapSlice(Row r) {
     if (Objects.isNull(r)) {
-      return null;
+      return Slice.newBuilder().build();
     }
 
     CoordSystem.Builder coordSysBuilder = CoordSystem.newBuilder();
