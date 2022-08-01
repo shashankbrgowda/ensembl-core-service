@@ -43,6 +43,26 @@ public class GeneRepo {
         .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
   }
 
+  public Uni<Gene> findByStableId(ConnectionParams connectionParams, String stableId) {
+    String sql = String.format("""
+                        SELECT  g.gene_id, g.seq_region_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, g.analysis_id, 
+                          g.biotype, g.display_xref_id, g.description, g.source, g.is_current, g.canonical_transcript_id, g.stable_id, 
+                          g.version, g.created_date, g.modified_date, x.display_label, x.dbprimary_acc, x.description, x.version, 
+                          exdb.db_name, exdb.status, exdb.db_release, exdb.db_display_name, x.info_type, x.info_text 
+                        FROM (( (gene g) 
+                        LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
+                        LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )  
+                        WHERE g.stable_id = '%s' ORDER BY g.gene_id """, stableId);
+    return connectionHandler
+            .pool(connectionParams)
+            .preparedQuery(sql)
+            .execute()
+            .onItem()
+            .transform(RowSet::iterator)
+            .onItem()
+            .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
+  }
+
   public Uni<CountResponse> countAllByBioTypes(
       ConnectionParams params, ProtocolStringList bioTypes) {
     String bioTypesStr = "'" + String.join("','", new ArrayList<>(bioTypes)) + "'";

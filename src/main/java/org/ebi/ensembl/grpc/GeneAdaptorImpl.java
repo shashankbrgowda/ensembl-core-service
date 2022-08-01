@@ -1,7 +1,6 @@
 package org.ebi.ensembl.grpc;
 
 import io.quarkus.grpc.GrpcService;
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.*;
 import org.ebi.ensembl.grpc.gene.*;
@@ -20,7 +19,8 @@ public class GeneAdaptorImpl implements GeneAdaptor {
   private final SequenceRegionRepo sequenceRegionRepo;
   private final AnalysisRepo analysisRepo;
 
-  public GeneAdaptorImpl(GeneRepo geneRepo, SequenceRegionRepo sequenceRegionRepo, AnalysisRepo analysisRepo) {
+  public GeneAdaptorImpl(
+      GeneRepo geneRepo, SequenceRegionRepo sequenceRegionRepo, AnalysisRepo analysisRepo) {
     this.geneRepo = geneRepo;
     this.sequenceRegionRepo = sequenceRegionRepo;
     this.analysisRepo = analysisRepo;
@@ -69,9 +69,9 @@ public class GeneAdaptorImpl implements GeneAdaptor {
             gene -> {
               Gene.Builder builder = gene.toBuilder();
               return sequenceRegionRepo
-                          .fetchBySeqRegionId(connectionParams, gene.getSeqRegionId())
-                          .onItem()
-                          .transform(slice -> builder.setSlice(slice).build());
+                  .fetchBySeqRegionId(connectionParams, gene.getSeqRegionId())
+                  .onItem()
+                  .transform(slice -> builder.setSlice(slice).build());
             })
         .merge()
         .onItem()
@@ -94,7 +94,28 @@ public class GeneAdaptorImpl implements GeneAdaptor {
 
   @Override
   public Uni<MultiGeneResponse> fetchAllByStableIdList(FetchAllGenesByStableIdListRequest request) {
-    return null;
+    List<Uni<Gene>> geneUniList =
+        request.getStableIdsList().stream()
+            .map(
+                id -> {
+                  FetchGeneByStableIdRequest fetchGeneByStableIdRequest =
+                      FetchGeneByStableIdRequest.newBuilder()
+                          .setStableId(id)
+                          .setRequestMetadata(request.getRequestMetadata())
+                          .build();
+                  return fetchByStableId(fetchGeneByStableIdRequest);
+                })
+            .collect(Collectors.toList());
+
+    return Uni.combine()
+        .all()
+        .unis(geneUniList)
+        .combinedWith(
+            l -> {
+              List<Gene> geneList = new ArrayList<>();
+              l.forEach(g -> geneList.add((Gene) g));
+              return MultiGeneResponse.newBuilder().addAllGenes(geneList).build();
+            });
   }
 
   @Override
@@ -124,7 +145,26 @@ public class GeneAdaptorImpl implements GeneAdaptor {
 
   @Override
   public Uni<Gene> fetchByStableId(FetchGeneByStableIdRequest request) {
-    return null;
+    ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
+    return geneRepo
+        .findByStableId(connectionParams, request.getStableId())
+        .onItem()
+        .transformToUni(
+            gene -> {
+              Gene.Builder builder = gene.toBuilder();
+              return sequenceRegionRepo
+                  .fetchBySeqRegionId(connectionParams, gene.getSeqRegionId())
+                  .onItem()
+                  .transform(slice -> builder.setSlice(slice).build());
+            })
+        .onItem()
+        .transformToUni(
+            gene -> {
+              Gene.Builder builder = gene.toBuilder();
+              return analysisRepo
+                  .fetchByDbId(connectionParams, gene.getAnalysisId())
+                  .onItem()
+                  .transform(analysis -> builder.setAnalysis(analysis).build());
+            });
   }
-
 }
