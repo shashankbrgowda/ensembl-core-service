@@ -1,13 +1,11 @@
 package org.ebi.ensembl.repo;
 
 import com.google.protobuf.ProtocolStringList;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import io.vertx.mutiny.sqlclient.*;
 import org.apache.commons.lang3.StringUtils;
-import org.ebi.ensembl.grpc.common.ConnectionParams;
-import org.ebi.ensembl.grpc.common.CountResponse;
-import org.ebi.ensembl.grpc.common.DBEntry;
-import org.ebi.ensembl.grpc.common.Gene;
+import org.ebi.ensembl.grpc.common.*;
 import org.ebi.ensembl.handler.ConnectionHandler;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -59,6 +57,36 @@ public class GeneRepo {
         .transform(RowSet::iterator)
         .onItem()
         .transform(itr -> itr.hasNext() ? countDto(itr.next()) : null);
+  }
+
+  public Multi<Gene> fetchAllBySlice(ConnectionParams connectionParams, Slice slice, String source, String bioType) {
+    StringBuilder constraintSb = new StringBuilder(String.format(" g.is_current = 1 AND g.seq_region_id = %d ", slice.getSeqRegionId()));
+
+    if(StringUtils.isNotEmpty(source)) {
+      constraintSb.append(String.format(" AND g.source = '%s' ", source));
+    }
+
+    if(StringUtils.isNotEmpty(bioType)) {
+      constraintSb.append(String.format(" AND g.biotype = '%s' ", bioType));
+    }
+
+    return connectionHandler
+            .pool(connectionParams)
+            .preparedQuery(
+                    """
+                        SELECT  g.gene_id, g.seq_region_id, g.seq_region_start, g.seq_region_end, g.seq_region_strand, g.analysis_id, 
+                          g.biotype, g.display_xref_id, g.description, g.source, g.is_current, g.canonical_transcript_id, g.stable_id, 
+                          g.version, g.created_date, g.modified_date, x.display_label, x.dbprimary_acc, x.description, x.version, 
+                          exdb.db_name, exdb.status, exdb.db_release, exdb.db_display_name, x.info_type, x.info_text 
+                        FROM (( (gene g) 
+                        LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
+                        LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )  
+                        WHERE """ + constraintSb + " ORDER BY g.gene_id ")
+            .execute()
+            .onItem()
+            .transformToMulti(rows -> Multi.createFrom().iterable(rows))
+            .onItem()
+            .transform(this::geneDto);
   }
 
   private CountResponse countDto(Row row) {

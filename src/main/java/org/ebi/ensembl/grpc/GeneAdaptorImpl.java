@@ -1,6 +1,7 @@
 package org.ebi.ensembl.grpc;
 
 import io.quarkus.grpc.GrpcService;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.ebi.ensembl.grpc.common.*;
 import org.ebi.ensembl.grpc.gene.*;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// TODO: Error handling
+// TODO: Error handling, Refactor
 @GrpcService
 public class GeneAdaptorImpl implements GeneAdaptor {
   private final GeneRepo geneRepo;
@@ -59,7 +60,36 @@ public class GeneAdaptorImpl implements GeneAdaptor {
 
   @Override
   public Uni<MultiGeneResponse> fetchAllBySlice(FetchAllGenesBySliceRequest request) {
-    return null;
+    ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
+    return geneRepo
+        .fetchAllBySlice(
+            connectionParams, request.getSlice(), request.getSource(), request.getBioType())
+        .onItem()
+        .transformToUni(
+            gene -> {
+              Gene.Builder builder = gene.toBuilder();
+              return sequenceRegionRepo
+                          .fetchBySeqRegionId(connectionParams, gene.getSeqRegionId())
+                          .onItem()
+                          .transform(slice -> builder.setSlice(slice).build());
+            })
+        .merge()
+        .onItem()
+        .transformToUni(
+            gene -> {
+              Gene.Builder builder = gene.toBuilder();
+              return analysisRepo
+                  .fetchByDbId(connectionParams, gene.getAnalysisId())
+                  .onItem()
+                  .transform(analysis -> builder.setAnalysis(analysis).build());
+            })
+        .merge()
+        .collect()
+        .asList()
+        .onItem()
+        .transformToUni(
+            genes ->
+                Uni.createFrom().item(MultiGeneResponse.newBuilder().addAllGenes(genes).build()));
   }
 
   @Override
@@ -94,21 +124,6 @@ public class GeneAdaptorImpl implements GeneAdaptor {
 
   @Override
   public Uni<Gene> fetchByStableId(FetchGeneByStableIdRequest request) {
-    return null;
-  }
-
-  @Override
-  public Uni<Gene> fetchByTranscriptId(FetchGeneByTranscriptIdRequest request) {
-    return null;
-  }
-
-  @Override
-  public Uni<Gene> fetchByTranscriptStableId(FetchGeneByTranscriptStableIdRequest request) {
-    return null;
-  }
-
-  @Override
-  public Uni<Gene> fetchByTranslationStableId(FetchGeneByTranslationStableIdRequest request) {
     return null;
   }
 

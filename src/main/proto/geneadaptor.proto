@@ -39,15 +39,6 @@ service GeneAdaptor {
   // be converted to a different coordinate system through a call to transform() or transfer(). If
   // the gene or exon is not found undef is returned instead.
   rpc FetchByStableId(FetchGeneByStableIdRequest) returns (Gene) {};
-
-  // Retrieves a gene from the database via the database identifier of one of its transcripts.
-  rpc FetchByTranscriptId(FetchGeneByTranscriptIdRequest) returns (Gene) {};
-
-  // Retrieves a gene from the database via the stable ID of one of its transcripts
-  rpc FetchByTranscriptStableId(FetchGeneByTranscriptStableIdRequest) returns (Gene);
-
-  // Retrieves a gene via the stable id of one of its translations.
-  rpc FetchByTranslationStableId(FetchGeneByTranslationStableIdRequest) returns (Gene);
 }
 
 message FetchAllGenesBySliceRequest {
@@ -55,9 +46,6 @@ message FetchAllGenesBySliceRequest {
 
   // The slice to fetch genes on.
   Slice slice = 2;
-
-  // (optional) the logic name of the type of features to obtain
-  optional string logic_name = 3;
 
   // (optional) if true, transcripts will be loaded immediately rather than lazy loaded later.
   optional bool load_transcripts = 4;
