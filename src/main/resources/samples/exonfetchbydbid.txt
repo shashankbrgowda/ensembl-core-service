@@ -1,0 +1,39 @@
+CONSTRAINT: e.exon_id = ?
+
+ SELECT  e.exon_id, e.seq_region_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, e.phase, e.end_phase, e.is_current, e.is_constitutive, e.stable_id, e.version, UNIX_TIMESTAMP(created_date), UNIX_TIMESTAMP(modified_date)
+FROM  (exon e)
+ WHERE e.exon_id = ?
+
+
+
+ Exon : $VAR1 = bless( {
+                 'version' => 1,
+                 'created_date' => 1126708008,
+                 'modified_date' => 1126708008,
+                 'is_constitutive' => 0,
+                 'stable_id' => 'OTTHUME00001078021',
+                 'slice' => bless( {
+                                     'coord_system' => bless( {
+                                                                'name' => 'chromosome',
+                                                                'top_level' => 0,
+                                                                'default' => 0,
+                                                                'dbID' => 10010,
+                                                                'rank' => 100,
+                                                                'sequence_level' => 0,
+                                                                'version' => 'OtterArchive',
+                                                                'alias_to' => undef
+                                                              }, 'Bio::ensembl::CoordSystem' ),
+                                     'seq_region_name' => 'chr16-02',
+                                     'seq_region_length' => 88822254,
+                                     'start' => 1,
+                                     'strand' => 1,
+                                     'end' => 88822254
+                                   }, 'Bio::ensembl::Slice' ),
+                 'end_phase' => -1,
+                 'end' => 1232556,
+                 'start' => 1232078,
+                 'strand' => 1,
+                 'dbID' => 5793
+                 'is_current' => 0,
+                 'phase' => 0
+               }, 'Bio::ensembl::Exon' );

@@ -1,0 +1,4 @@
+SELECT  e.exon_id, e.seq_region_id, e.seq_region_start, e.seq_region_end, e.seq_region_strand, e.phase, e.end_phase, e.is_current, e.is_constitutive, e.stable_id, e.version, UNIX_TIMESTAMP(created_date), UNIX_TIMESTAMP(modified_date)
+FROM  (exon e, exon_transcript et)
+ WHERE et.transcript_id = 1588 AND e.exon_id = et.exon_id
+ORDER BY et.transcript_id, et.rank

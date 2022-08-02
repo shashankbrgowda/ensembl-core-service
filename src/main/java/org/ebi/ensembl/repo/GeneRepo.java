@@ -35,7 +35,7 @@ public class GeneRepo {
                 FROM (( (gene g) 
                 LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
                 LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )  
-                WHERE g.gene_id = ? ORDER BY g.gene_id """)
+                WHERE g.gene_id = ? AND g.is_current = 1 ORDER BY g.gene_id """)
         .execute(Tuple.of(dbId))
         .onItem()
         .transform(RowSet::iterator)
@@ -52,7 +52,7 @@ public class GeneRepo {
                         FROM (( (gene g) 
                         LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
                         LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )  
-                        WHERE g.stable_id = '%s' ORDER BY g.gene_id """, stableId);
+                        WHERE g.stable_id = '%s' AND g.is_current = 1 ORDER BY g.gene_id """, stableId);
     return connectionHandler
             .pool(connectionParams)
             .preparedQuery(sql)
@@ -141,7 +141,7 @@ public class GeneRepo {
             .setEnd(protoDefaultValue(r.getInteger("seq_region_end"), iCls))
             .setStrand(protoDefaultValue(r.getInteger("seq_region_strand"), iCls))
             .setAnalysisId(protoDefaultValue(r.getInteger("analysis_id"), iCls))
-            .setStableId(protoDefaultValue(r.getString("biotype"), sCls))
+            .setBioType(protoDefaultValue(r.getString("biotype"), sCls))
             .setDisplayXrefId(protoDefaultValue(r.getInteger("display_xref_id"), iCls))
             .setSource(protoDefaultValue(r.getString("source"), sCls))
             .setDescription(protoDefaultValue(r.getString("description"), sCls))

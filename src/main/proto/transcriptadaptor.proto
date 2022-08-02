@@ -7,11 +7,17 @@ option java_package = "org.ebi.ensembl.grpc.transcript";
 option java_outer_classname = "TranscriptAdaptorProto";
 
 service TranscriptAdaptor {
-  rpc FetchAllBySlice(FetchAllTranscriptsBySliceRequest) returns (MultiTranscriptsResponse) {};
-  rpc FetchAllByDbIdList(FetchAllTranscriptsByDbIdListRequest) returns (MultiTranscriptsResponse) {};
-  rpc FetchAllByStableIdList(FetchAllTranscriptsByStableIdListRequest) returns (MultiTranscriptsResponse) {};
+  rpc FetchAllBySlice(FetchAllTranscriptsBySliceRequest) returns (MultiTranscriptResponse) {};
+  rpc FetchAllByDbIdList(FetchAllTranscriptsByDbIdListRequest) returns (MultiTranscriptResponse) {};
+  rpc FetchAllByStableIdList(FetchAllTranscriptsByStableIdListRequest) returns (MultiTranscriptResponse) {};
   rpc FetchByDbId(FetchTranscriptByDbIdRequest) returns (Transcript) {};
   rpc FetchByStableId(FetchTranscriptByStableIdRequest) returns (Transcript) {};
+  rpc FetchAllByGeneId(FetchAllTranscriptsByGeneIdRequest) returns (MultiTranscriptResponse) {};
+}
+
+message FetchAllTranscriptsByGeneIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 gene_id = 2;
 }
 
 message FetchAllTranscriptsBySliceRequest {
@@ -44,6 +50,6 @@ message FetchTranscriptByStableIdRequest {
   string stable_id = 2;
 }
 
-message MultiTranscriptsResponse {
+message MultiTranscriptResponse {
   repeated Transcript transcripts = 1;
 }

@@ -141,6 +141,36 @@ message Transcript {
   DBEntry display_xref = 18;
 }
 
+message Translation {
+  int32 translation_id = 1;
+  int32 seq_start = 2;
+  int32 seq_end = 3;
+  int32 start_exon_id = 4;
+  int32 end_exon_id = 5;
+  string stable_id = 6;
+  int32 version = 7;
+  string created_date = 8;
+  string modified_date = 9;
+  int32 transcript_id = 10;
+}
+
+message Exon {
+ int32 exon_id = 1;
+ int32 seq_region_id = 2;
+ int32 seq_region_start = 3;
+ int32 seq_region_end = 4;
+ int32 seq_region_strand = 5;
+ int32 phase = 6;
+ int32 end_phase = 7;
+ bool is_current = 8;
+ bool is_constitutive = 9;
+ string stable_id = 10;
+ int32 version = 11;
+ string created_date = 12;
+ string modified_date = 13;
+ Slice slice = 14;
+}
+
 message DBEntry {
   int32 db_id = 1;
   string display_id = 2;

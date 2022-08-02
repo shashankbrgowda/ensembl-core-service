@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.exon";
+option java_outer_classname = "ExonAdaptorProto";
+
+service ExonAdaptor {
+  rpc FetchAllBySlice(FetchAllExonsBySliceRequest) returns (MultiExonResponse) {};
+  rpc FetchAllByDbIdList(FetchAllExonsByDbIdListRequest) returns (MultiExonResponse) {};
+  rpc FetchAllByStableIdList(FetchAllExonsByStableIdListRequest) returns (MultiExonResponse) {};
+  rpc FetchByDbId(FetchExonByDbIdRequest) returns (Exon) {};
+  rpc FetchByStableId(FetchExonByStableIdRequest) returns (Exon) {};
+  rpc FetchAllByTranscriptId(FetchAllExonsByTranscriptIdRequest) returns (MultiExonResponse) {};
+}
+
+message FetchAllExonsByTranscriptIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 transcript_id = 2;
+}
+
+message FetchAllExonsBySliceRequest {
+  RequestMetadata request_metadata = 1;
+
+  // The slice to fetch genes on.
+  Slice slice = 2;
+}
+
+message FetchAllExonsByDbIdListRequest {
+  RequestMetadata request_metadata = 1;
+  repeated int32 db_ids = 2;
+}
+
+message FetchAllExonsByStableIdListRequest {
+  RequestMetadata request_metadata = 1;
+  repeated string stable_ids = 2;
+}
+
+message FetchExonByDbIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 db_id = 2;
+}
+
+message FetchExonByStableIdRequest {
+  RequestMetadata request_metadata = 1;
+  string stable_id = 2;
+}
+
+message MultiExonResponse {
+  repeated Exon exons = 1;
+}

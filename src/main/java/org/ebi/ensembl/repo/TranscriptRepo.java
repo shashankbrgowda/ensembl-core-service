@@ -6,6 +6,7 @@ import io.vertx.mutiny.sqlclient.Row;
 import io.vertx.mutiny.sqlclient.RowSet;
 import org.apache.commons.lang3.StringUtils;
 import org.ebi.ensembl.grpc.common.*;
+import org.ebi.ensembl.grpc.transcript.MultiTranscriptResponse;
 import org.ebi.ensembl.handler.ConnectionHandler;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -54,7 +55,7 @@ public class TranscriptRepo {
                         FROM (( (transcript t)
                           LEFT JOIN xref x ON x.xref_id = t.display_xref_id )
                           LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )
-                         WHERE t.transcript_id = %d
+                         WHERE t.transcript_id = %d AND t.is_current = 1
                          ORDER BY t.transcript_id """, dbId);
     return connectionHandler
             .pool(connectionParams)
@@ -75,7 +76,7 @@ public class TranscriptRepo {
                         FROM (( (transcript t)
                           LEFT JOIN xref x ON x.xref_id = t.display_xref_id )
                           LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )
-                         WHERE t.stable_id = '%s'
+                         WHERE t.stable_id = '%s' AND t.is_current = 1
                          ORDER BY t.transcript_id """, stableId);
     return connectionHandler
             .pool(connectionParams)
@@ -85,6 +86,27 @@ public class TranscriptRepo {
             .transform(RowSet::iterator)
             .onItem()
             .transform(itr -> itr.hasNext() ? transcriptDto(itr.next()) : Transcript.newBuilder().build());
+  }
+
+  public Multi<Transcript> fetchAllByGeneId(ConnectionParams connectionParams, int geneId) {
+    String sql = String.format("""
+                        SELECT  t.transcript_id, t.seq_region_id, t.seq_region_start, t.seq_region_end, t.seq_region_strand, 
+                         t.analysis_id, t.gene_id, t.is_current, t.stable_id, t.version, created_date, modified_date, t.description, 
+                         t.biotype, exdb.db_name, exdb.status, exdb.db_display_name, x.xref_id, x.display_label, x.dbprimary_acc, 
+                         x.version, x.description, x.info_type, x.info_text, exdb.db_release, t.source
+                        FROM (( (transcript t)
+                          LEFT JOIN xref x ON x.xref_id = t.display_xref_id )
+                          LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )
+                         WHERE t.gene_id = %d AND t.is_current = 1
+                         ORDER BY t.transcript_id """, geneId);
+    return connectionHandler
+            .pool(connectionParams)
+            .query(sql)
+            .execute()
+            .onItem()
+            .transformToMulti(rows -> Multi.createFrom().iterable(rows))
+            .onItem()
+            .transform(this::transcriptDto);
   }
 
   private Transcript transcriptDto(Row r) {
@@ -106,7 +128,7 @@ public class TranscriptRepo {
             .setEnd(protoDefaultValue(r.getInteger("seq_region_end"), iCls))
             .setStrand(protoDefaultValue(r.getInteger("seq_region_strand"), iCls))
             .setAnalysisId(protoDefaultValue(r.getInteger("analysis_id"), iCls))
-            .setStableId(protoDefaultValue(r.getString("biotype"), sCls))
+            .setBioType(protoDefaultValue(r.getString("biotype"), sCls))
             .setDisplayXrefId(protoDefaultValue(r.getInteger("xref_id"), iCls))
             .setSource(protoDefaultValue(r.getString("source"), sCls))
             .setDescription(protoDefaultValue(r.getString("description"), sCls))

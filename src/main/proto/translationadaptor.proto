@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.translation";
+option java_outer_classname = "TranslationAdaptorProto";
+
+service TranslationAdaptor {
+  rpc FetchByDbId(FetchTranslationByDbIdRequest) returns (Translation) {};
+  rpc FetchByStableId(FetchTranslationByStableIdRequest) returns (Translation) {};
+  rpc FetchByTranscriptId(FetchTranslationByTranscriptIdRequest) returns (Translation) {};
+}
+
+message FetchTranslationByDbIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 db_id = 2;
+}
+
+message FetchTranslationByStableIdRequest {
+  RequestMetadata request_metadata = 1;
+  string stable_id = 2;
+}
+
+message FetchTranslationByTranscriptIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 transcript_id = 2;
+}

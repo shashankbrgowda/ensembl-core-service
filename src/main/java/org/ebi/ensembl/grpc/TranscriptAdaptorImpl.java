@@ -28,7 +28,7 @@ public class TranscriptAdaptorImpl implements TranscriptAdaptor {
   }
 
   @Override
-  public Uni<MultiTranscriptsResponse> fetchAllBySlice(FetchAllTranscriptsBySliceRequest request) {
+  public Uni<MultiTranscriptResponse> fetchAllBySlice(FetchAllTranscriptsBySliceRequest request) {
     ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
     return transcriptRepo
         .fetchAllBySlice(connectionParams, request.getSlice())
@@ -59,13 +59,13 @@ public class TranscriptAdaptorImpl implements TranscriptAdaptor {
             transcripts ->
                 Uni.createFrom()
                     .item(
-                        MultiTranscriptsResponse.newBuilder()
+                        MultiTranscriptResponse.newBuilder()
                             .addAllTranscripts(transcripts)
                             .build()));
   }
 
   @Override
-  public Uni<MultiTranscriptsResponse> fetchAllByDbIdList(
+  public Uni<MultiTranscriptResponse> fetchAllByDbIdList(
       FetchAllTranscriptsByDbIdListRequest request) {
     List<Uni<Transcript>> transcriptUniList =
         request.getDbIdsList().stream()
@@ -87,14 +87,12 @@ public class TranscriptAdaptorImpl implements TranscriptAdaptor {
             l -> {
               List<Transcript> transcriptList = new ArrayList<>();
               l.forEach(t -> transcriptList.add((Transcript) t));
-              return MultiTranscriptsResponse.newBuilder()
-                  .addAllTranscripts(transcriptList)
-                  .build();
+              return MultiTranscriptResponse.newBuilder().addAllTranscripts(transcriptList).build();
             });
   }
 
   @Override
-  public Uni<MultiTranscriptsResponse> fetchAllByStableIdList(
+  public Uni<MultiTranscriptResponse> fetchAllByStableIdList(
       FetchAllTranscriptsByStableIdListRequest request) {
     List<Uni<Transcript>> transcriptUniList =
         request.getStableIdsList().stream()
@@ -116,9 +114,7 @@ public class TranscriptAdaptorImpl implements TranscriptAdaptor {
             l -> {
               List<Transcript> transcriptList = new ArrayList<>();
               l.forEach(t -> transcriptList.add((Transcript) t));
-              return MultiTranscriptsResponse.newBuilder()
-                  .addAllTranscripts(transcriptList)
-                  .build();
+              return MultiTranscriptResponse.newBuilder().addAllTranscripts(transcriptList).build();
             });
   }
 
@@ -170,5 +166,42 @@ public class TranscriptAdaptorImpl implements TranscriptAdaptor {
                   .onItem()
                   .transform(analysis -> builder.setAnalysis(analysis).build());
             });
+  }
+
+  @Override
+  public Uni<MultiTranscriptResponse> fetchAllByGeneId(FetchAllTranscriptsByGeneIdRequest request) {
+    ConnectionParams connectionParams = request.getRequestMetadata().getConnectionParams();
+    return transcriptRepo
+        .fetchAllByGeneId(connectionParams, request.getGeneId())
+        .onItem()
+        .transformToUni(
+            transcript -> {
+              Transcript.Builder builder = transcript.toBuilder();
+              return sequenceRegionRepo
+                  .fetchBySeqRegionId(connectionParams, transcript.getSeqRegionId())
+                  .onItem()
+                  .transform(slice -> builder.setSlice(slice).build());
+            })
+        .merge()
+        .onItem()
+        .transformToUni(
+            transcript -> {
+              Transcript.Builder builder = transcript.toBuilder();
+              return analysisRepo
+                  .fetchByDbId(connectionParams, transcript.getAnalysisId())
+                  .onItem()
+                  .transform(analysis -> builder.setAnalysis(analysis).build());
+            })
+        .merge()
+        .collect()
+        .asList()
+        .onItem()
+        .transformToUni(
+            transcripts ->
+                Uni.createFrom()
+                    .item(
+                        MultiTranscriptResponse.newBuilder()
+                            .addAllTranscripts(transcripts)
+                            .build()));
   }
 }
