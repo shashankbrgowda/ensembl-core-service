@@ -1,0 +1,70 @@
+
+ SELECT  t.transcript_id, t.seq_region_id, t.seq_region_start, t.seq_region_end, t.seq_region_strand, t.analysis_id,
+ t.gene_id, t.is_current, t.stable_id, t.version, UNIX_TIMESTAMP(created_date), UNIX_TIMESTAMP(modified_date), t.description,
+ t.biotype, exdb.db_name, exdb.status, exdb.db_display_name, x.xref_id, x.display_label, x.dbprimary_acc, x.version,
+ x.description, x.info_type, x.info_text, exdb.db_release, t.source
+FROM (( (transcript t)
+  LEFT JOIN xref x ON x.xref_id = t.display_xref_id )
+  LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )
+ WHERE t.transcript_id = ?
+ ORDER BY t.transcript_id
+
+
+
+ Transcript : $VAR1 = bless( {
+                 'description' => undef,
+                 'biotype' => 'protein_coding',
+                 'created_date' => 1129097715,
+                 'start' => 891775,
+                 'analysis' => bless( {
+                                        '_module' => undef,
+                                        '_program_file' => undef,
+                                        '_displayable' => undef,
+                                        '_created' => '2007-08-24 18:07:22',
+                                        '_parameters' => undef,
+                                        '_db_file' => undef,
+                                        '_display_label' => undef,
+                                        '_gff_feature' => undef,
+                                        '_db' => undef,
+                                        '_module_version' => undef,
+                                        '_gff_source' => undef,
+                                        '_web_data' => undef,
+                                        '_logic_name' => 'otter',
+                                        '_description' => undef,
+                                        'dbID' => 9921,
+                                        '_program' => undef,
+                                        '_program_version' => undef,
+                                        '_db_version' => undef
+                                      }, 'Bio::EnsEMBL::Analysis' ),
+                 'external_display_name' => undef,
+                 'stable_id' => 'OTTHUMT00000246909',
+                 'version' => 1,
+                 'display_xref' => undef,
+                 'end' => 899818,
+                 'source' => 'CCDS',
+                 'external_status' => undef,
+                 'strand' => 1,
+                 'edits_enabled' => 1,
+                 'dbID' => 1588,
+                 'modified_date' => 1150183423,
+                 'external_name' => undef,
+                 'external_db' => undef,
+                 'is_current' => 0,
+                 'slice' => bless( {
+                                     'seq_region_length' => 247199719,
+                                     'seq_region_name' => 'chr1-11',
+                                     'start' => 1,
+                                     'strand' => 1,
+                                     'coord_system' => bless( {
+                                                                'dbID' => 10010,
+                                                                'top_level' => 0,
+                                                                'version' => 'OtterArchive',
+                                                                'sequence_level' => 0,
+                                                                'alias_to' => undef,
+                                                                'default' => 0,
+                                                                'name' => 'chromosome',
+                                                                'rank' => 100
+                                                              }, 'Bio::EnsEMBL::CoordSystem' ),
+                                     'end' => 247199719
+                                   }, 'Bio::EnsEMBL::Slice' )
+               }, 'Bio::EnsEMBL::Transcript' );

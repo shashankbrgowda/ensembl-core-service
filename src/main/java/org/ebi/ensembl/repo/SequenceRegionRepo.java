@@ -46,7 +46,7 @@ public class SequenceRegionRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? mapSeqRegion(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? mapSeqRegion(itr.next()) : Slice.newBuilder().build());
   }
 
   public Uni<Slice> fetchBySeqRegionId(ConnectionParams connectionParams, Integer seqRegionId) {
@@ -62,7 +62,7 @@ public class SequenceRegionRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? mapSlice(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? mapSlice(itr.next()) : Slice.newBuilder().build());
   }
 
   private Slice mapSeqRegion(Row r) {

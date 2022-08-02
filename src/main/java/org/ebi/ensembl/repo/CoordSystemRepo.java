@@ -45,7 +45,7 @@ public class CoordSystemRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? mapCoordSystem(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? mapCoordSystem(itr.next()) : CoordSystem.newBuilder().build());
   }
 
   private CoordSystem mapCoordSystem(Row r) {

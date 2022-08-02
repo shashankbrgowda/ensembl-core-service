@@ -40,7 +40,7 @@ public class GeneRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : Gene.newBuilder().build());
   }
 
   public Uni<Gene> findByStableId(ConnectionParams connectionParams, String stableId) {
@@ -60,7 +60,7 @@ public class GeneRepo {
             .onItem()
             .transform(RowSet::iterator)
             .onItem()
-            .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : null);
+            .transform(itr -> itr.hasNext() ? geneDto(itr.next()) : Gene.newBuilder().build());
   }
 
   public Uni<CountResponse> countAllByBioTypes(
@@ -76,11 +76,14 @@ public class GeneRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? countDto(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? countDto(itr.next()) : CountResponse.newBuilder().build());
   }
 
   public Multi<Gene> fetchAllBySlice(ConnectionParams connectionParams, Slice slice, String source, String bioType) {
-    StringBuilder constraintSb = new StringBuilder(String.format(" g.is_current = 1 AND g.seq_region_id = %d ", slice.getSeqRegionId()));
+    // AND g.seq_region_start <= %d AND g.seq_region_end >= %d
+    StringBuilder constraintSb =
+            new StringBuilder(String.format(" g.is_current = 1 AND g.seq_region_id = %d ",
+                    slice.getSeqRegionId(), slice.getStart(), slice.getEnd()));
 
     if(StringUtils.isNotEmpty(source)) {
       constraintSb.append(String.format(" AND g.source = '%s' ", source));
@@ -101,7 +104,7 @@ public class GeneRepo {
                         FROM (( (gene g) 
                         LEFT JOIN xref x ON x.xref_id = g.display_xref_id ) 
                         LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )  
-                        WHERE """ + constraintSb + " ORDER BY g.gene_id ")
+                        WHERE """ + constraintSb)
             .execute()
             .onItem()
             .transformToMulti(rows -> Multi.createFrom().iterable(rows))

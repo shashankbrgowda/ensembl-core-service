@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "commons.proto";
+
+option java_multiple_files = true;
+option java_package = "org.ebi.ensembl.grpc.transcript";
+option java_outer_classname = "TranscriptAdaptorProto";
+
+service TranscriptAdaptor {
+  rpc FetchAllBySlice(FetchAllTranscriptsBySliceRequest) returns (MultiTranscriptsResponse) {};
+  rpc FetchAllByDbIdList(FetchAllTranscriptsByDbIdListRequest) returns (MultiTranscriptsResponse) {};
+  rpc FetchAllByStableIdList(FetchAllTranscriptsByStableIdListRequest) returns (MultiTranscriptsResponse) {};
+  rpc FetchByDbId(FetchTranscriptByDbIdRequest) returns (Transcript) {};
+  rpc FetchByStableId(FetchTranscriptByStableIdRequest) returns (Transcript) {};
+}
+
+message FetchAllTranscriptsBySliceRequest {
+  RequestMetadata request_metadata = 1;
+
+  // The slice to fetch genes on.
+  Slice slice = 2;
+
+  // (optional) if true, exons will be loaded immediately rather than lazy loaded later.
+  optional bool load_exons = 4;
+}
+
+message FetchAllTranscriptsByDbIdListRequest {
+  RequestMetadata request_metadata = 1;
+  repeated int32 db_ids = 2;
+}
+
+message FetchAllTranscriptsByStableIdListRequest {
+  RequestMetadata request_metadata = 1;
+  repeated string stable_ids = 2;
+}
+
+message FetchTranscriptByDbIdRequest {
+  RequestMetadata request_metadata = 1;
+  int32 db_id = 2;
+}
+
+message FetchTranscriptByStableIdRequest {
+  RequestMetadata request_metadata = 1;
+  string stable_id = 2;
+}
+
+message MultiTranscriptsResponse {
+  repeated Transcript transcripts = 1;
+}

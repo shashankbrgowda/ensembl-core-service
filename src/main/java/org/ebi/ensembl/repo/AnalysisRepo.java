@@ -37,7 +37,7 @@ public class AnalysisRepo {
         .onItem()
         .transform(RowSet::iterator)
         .onItem()
-        .transform(itr -> itr.hasNext() ? mapAnalysis(itr.next()) : null);
+        .transform(itr -> itr.hasNext() ? mapAnalysis(itr.next()) : Analysis.newBuilder().build());
   }
 
   private Analysis mapAnalysis(Row r) {

@@ -1,0 +1,6 @@
+ SELECT  t.transcript_id, t.seq_region_id, t.seq_region_start, t.seq_region_end, t.seq_region_strand, t.analysis_id, t.gene_id, t.is_current, t.stable_id, t.version, UNIX_TIMESTAMP(created_date), UNIX_TIMESTAMP(modified_date), t.description, t.biotype, exdb.db_name, exdb.status, exdb.db_display_name, x.xref_id, x.display_label, x.dbprimary_acc, x.version, x.description, x.info_type, x.info_text, exdb.db_release, t.source
+FROM (( (transcript t)
+  LEFT JOIN xref x ON x.xref_id = t.display_xref_id )
+  LEFT JOIN external_db exdb ON exdb.external_db_id = x.external_db_id )
+ WHERE t.is_current = 1 AND t.seq_region_id IN (131539) AND t.seq_region_start <= 600000 AND t.seq_region_end >= 200000 AND t.seq_region_start >= -168837398
+ ORDER BY t.transcript_id

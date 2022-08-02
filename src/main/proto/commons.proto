@@ -110,14 +110,35 @@ message Gene {
   bool is_current = 12;
   int32 display_xref_id = 13;
   // the canonical transcript dbID of this gene, if the transcript object itself is not available.
-  int32 canonical_transcript_id = 17;
+  int32 canonical_transcript_id = 14;
   // the date the gene was created
-  string created_date = 18;
+  string created_date = 15;
   // the date the gene was last modified
-  string modified_date = 19;
-  Slice slice = 20;
-  Analysis analysis = 21;
-  DBEntry display_xref = 22;
+  string modified_date = 16;
+  Slice slice = 17;
+  Analysis analysis = 18;
+  DBEntry display_xref = 19;
+}
+
+message Transcript {
+  int32 db_id = 1;
+  string stable_id = 2;
+  int32 version = 3;
+  int32 seq_region_id = 4;
+  int32 start = 5;
+  int32 end = 6;
+  int32 strand = 7;
+  string bio_type = 8;
+  string description = 9;
+  string source = 10;
+  int32 analysis_id = 11;
+  bool is_current = 12;
+  int32 display_xref_id = 13;
+  string created_date = 14;
+  string modified_date = 15;
+  Slice slice = 16;
+  Analysis analysis = 17;
+  DBEntry display_xref = 18;
 }
 
 message DBEntry {

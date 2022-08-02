@@ -82,16 +82,6 @@ message FetchGeneByTranscriptIdRequest {
   string transcript_id = 2;
 }
 
-message FetchGeneByStableIdVersionRequest {
-  RequestMetadata request_metadata = 1;
-
-  // The stable ID of the gene to retrieve
-  string stable_id = 2;
-
-  // The version of the stable_id to retrieve
-  int32 version = 3;
-}
-
 message FetchGeneByStableIdRequest {
   RequestMetadata request_metadata = 1;
 
